@@ -1,4 +1,11 @@
 import React, { useState, useCallback } from 'react';
+import { supabase } from '../../lib/supabaseClient';
+
+const STATEMENTS_BUCKET = 'statements';
+const STATEMENTS_TABLE = 'statements';
+
+const sanitizeFileName = (name) => name.replace(/[^\w.\-]+/g, '_');
+
 import {
   Box,
   Button,
@@ -129,24 +136,82 @@ const FileUpload = () => {
     setErrors([]);
   };
 
-  const handleUpload = () => {
-    if (files.length === 0) {
-      setErrors(['Please select at least one file to upload.']);
-      return;
-    }
+  const handleUpload = async () => {
+  if (files.length === 0) {
+    setErrors(['Please select at least one file to upload.']);
+    return;
+  }
 
-    // TODO: Implement actual upload logic when backend is ready
-    console.log('Files to upload:', files.map(f => ({
-      name: f.name,
-      size: f.size,
-      type: f.type,
-    })));
+  setErrors([]);
 
-    alert(`${files.length} file(s) ready for processing!\n(Backend processing not yet implemented)`);
-    
-    // Optionally clear files after upload
-    // clearAllFiles();
+  // Ensure we have an authenticated user
+  const { data: userData, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !userData?.user) {
+    setErrors(['You must be signed in to upload.']);
+    return;
+  }
+  const userId = userData.user.id;
+
+  // Upload each file to Storage, then insert a metadata row in the "statements" table
+  const uploadOne = async (fileObj) => {
+    const file = fileObj.file;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '');
+    const path = `${userId}/${timestamp}_${sanitizeFileName(file.name)}`;
+
+    // 1) Upload to Storage (no compression; preserves original quality)
+    const { error: uploadError } = await supabase
+      .storage
+      .from(STATEMENTS_BUCKET)
+      .upload(path, file, {
+        contentType: file.type || 'application/octet-stream',
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (uploadError) throw new Error(`${file.name}: ${uploadError.message}`);
+
+    // 2) Get a public URL (bucket can be public; if private, swap for signed URL flow)
+    const { data: pub } = supabase
+      .storage
+      .from(STATEMENTS_BUCKET)
+      .getPublicUrl(path);
+    const publicUrl = pub?.publicUrl ?? null;
+
+    // 3) Insert metadata row (timestamptz recorded server-side with default now())
+    const { error: insertError } = await supabase
+      .from(STATEMENTS_TABLE)
+      .insert({
+        user_id: userId,
+        storage_path: path,
+        bucket: STATEMENTS_BUCKET,
+        file_name: file.name,
+        mime_type: file.type || 'application/octet-stream',
+        size_bytes: file.size,
+        public_url: publicUrl,
+        // uploaded_at will be set by DB default (now()).
+      });
+
+    if (insertError) throw new Error(`${file.name}: ${insertError.message}`);
+
+    return { path, publicUrl };
   };
+
+  const results = await Promise.allSettled(files.map(uploadOne));
+  const failed = results.filter(r => r.status === 'rejected');
+  const succeeded = results.filter(r => r.status === 'fulfilled');
+
+  if (failed.length > 0) {
+    setErrors(failed.map(f => f.reason?.message || 'Upload failed for one or more files.'));
+  }
+
+  alert(`${succeeded.length} file(s) uploaded successfully${failed.length ? `, ${failed.length} failed (see errors above).` : '!'}`);
+
+  // Optionally clear files after successful upload:
+  // if (succeeded.length === files.length) clearAllFiles();
+
+  // Debug: see what got stored
+  console.log('Uploaded:', succeeded.map(s => s.value));
+};
 
   const getFileIcon = (type) => {
     if (type.startsWith('image/')) {
