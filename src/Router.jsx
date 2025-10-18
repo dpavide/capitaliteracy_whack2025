@@ -6,6 +6,7 @@ import App from "./App";
 import {
   Login,
   SignUp,
+  FileUpload,
 } from "./scenes";
 
 const AppRouter = () => {
@@ -20,6 +21,7 @@ const AppRouter = () => {
             <Route path="/" element={<App />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/upload" element={<FileUpload />} />
           </Routes>
         </Router>
       </ThemeProvider>
