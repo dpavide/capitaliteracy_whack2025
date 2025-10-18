@@ -30,7 +30,7 @@ const FileUpload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState([]);
 
-  const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
   const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
   const ALLOWED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.pdf'];
 
@@ -52,7 +52,7 @@ const FileUpload = () => {
 
     // Check file size
     if (file.size > MAX_FILE_SIZE) {
-      return `${file.name}: File size exceeds 100MB limit. Current size: ${formatFileSize(file.size)}`;
+      return `${file.name}: File size exceeds 10MB limit. Current size: ${formatFileSize(file.size)}`;
     }
 
     return null;
@@ -186,7 +186,7 @@ const FileUpload = () => {
             marginBottom: 4,
           }}
         >
-          Upload PNG, JPG, or PDF files (up to 100MB each)
+          Upload PNG, JPG, or PDF files (up to 10MB each)
         </Typography>
 
         {/* Error Messages */}
@@ -248,7 +248,7 @@ const FileUpload = () => {
             <Chip label="PNG" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
             <Chip label="JPG" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
             <Chip label="PDF" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
-            <Chip label="Max 100MB" size="small" sx={{ backgroundColor: colors.blueAccent[700] }} />
+            <Chip label="Max 10MB" size="small" sx={{ backgroundColor: colors.blueAccent[700] }} />
           </Box>
 
           <input
@@ -387,7 +387,7 @@ const FileUpload = () => {
             • Accepted formats: PNG, JPG, JPEG, PDF
           </Typography>
           <Typography variant="body2" sx={{ color: colors.gray[300], marginLeft: 3 }}>
-            • Maximum file size: 100MB per file
+            • Maximum file size: 10MB per file
           </Typography>
           <Typography variant="body2" sx={{ color: colors.gray[300], marginLeft: 3 }}>
             • Multiple files can be uploaded at once
