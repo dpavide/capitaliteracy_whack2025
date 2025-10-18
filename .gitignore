@@ -17,3 +17,6 @@ __pycache__/
 
 # macOS system files
 .DS_Store
+
+# key store environment
+.env
