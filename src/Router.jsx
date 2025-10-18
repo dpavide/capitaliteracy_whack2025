@@ -7,6 +7,7 @@ import {
   Login,
   SignUp,
   FileUpload,
+  MainPage,
 } from "./scenes";
 
 const AppRouter = () => {
@@ -18,10 +19,12 @@ const AppRouter = () => {
         <CssBaseline />
         <Router>
           <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/upload" element={<FileUpload />} />
+            <Route path="/" element={<App />}>
+              <Route index element={<Login />} />
+              <Route path="main_page" element={<MainPage />} />
+              <Route path="signup" element={<SignUp />} />
+              <Route path="upload" element={<FileUpload />} />
+            </Route>
           </Routes>
         </Router>
       </ThemeProvider>
