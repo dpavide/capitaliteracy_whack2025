@@ -29,6 +29,7 @@ const FileUpload = () => {
   const [files, setFiles] = useState([]);
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
   const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
@@ -77,6 +78,10 @@ const FileUpload = () => {
             size: file.size,
             type: file.type,
             id: Date.now() + Math.random(),
+            // NEW: per-file status
+            status: 'pending',
+            error: null,
+            response: null,
           });
         }
       }
@@ -129,23 +134,50 @@ const FileUpload = () => {
     setErrors([]);
   };
 
-  const handleUpload = () => {
+  // REPLACED: implement actual upload to Flask backend (from old project's handleSubmit)
+  const handleUpload = async () => {
     if (files.length === 0) {
       setErrors(['Please select at least one file to upload.']);
       return;
     }
+    setUploading(true);
+    setErrors([]);
 
-    // TODO: Implement actual upload logic when backend is ready
-    console.log('Files to upload:', files.map(f => ({
-      name: f.name,
-      size: f.size,
-      type: f.type,
-    })));
+    try {
+      for (const f of files) {
+        // mark as uploading
+        setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'uploading', error: null } : it));
 
-    alert(`${files.length} file(s) ready for processing!\n(Backend processing not yet implemented)`);
-    
-    // Optionally clear files after upload
-    // clearAllFiles();
+        const formData = new FormData();
+        formData.append('file', f.file, f.name);
+        // optional: backend defaults to 'formal' if omitted, but keep explicit for parity with old app
+        formData.append('style', 'formal');
+
+        try {
+          const res = await fetch('http://127.0.0.1:5000/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!res.ok) {
+            const msg = `Upload failed for ${f.name}`;
+            setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'error', error: msg } : it));
+            continue;
+          }
+
+          const data = await res.json();
+          // store server response (article, image_url, theme_css)
+          setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'success', response: data } : it));
+        } catch (err) {
+          const msg = `Upload failed for ${f.name}`;
+          setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'error', error: msg } : it));
+        }
+      }
+    } catch (e) {
+      setErrors([e?.message || 'Upload failed.']);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const getFileIcon = (type) => {
@@ -280,6 +312,7 @@ const FileUpload = () => {
                 variant="outlined"
                 size="small"
                 onClick={clearAllFiles}
+                disabled={uploading}
                 sx={{
                   color: colors.redAccent[500],
                   borderColor: colors.redAccent[500],
@@ -292,6 +325,9 @@ const FileUpload = () => {
                 Clear All
               </Button>
             </Box>
+
+            {/* NEW: show progress while uploading */}
+            {uploading && <LinearProgress sx={{ marginBottom: 2 }} />}
 
             <List>
               {files.map((fileObj) => (
@@ -314,12 +350,12 @@ const FileUpload = () => {
                       </Typography>
                     }
                     secondary={
-                      <Box sx={{ display: 'flex', gap: 2, marginTop: 0.5 }}>
+                      <Box sx={{ display: 'flex', gap: 2, marginTop: 0.5, alignItems: 'center' }}>
                         <Typography variant="body2" sx={{ color: colors.gray[300] }}>
                           {formatFileSize(fileObj.size)}
                         </Typography>
                         <Chip
-                          label={fileObj.type.split('/')[1].toUpperCase()}
+                          label={fileObj.type.split('/')[1]?.toUpperCase() || 'FILE'}
                           size="small"
                           sx={{
                             height: 20,
@@ -327,6 +363,16 @@ const FileUpload = () => {
                             backgroundColor: colors.blueAccent[800],
                           }}
                         />
+                        {/* NEW: status chips */}
+                        {fileObj.status === 'uploading' && (
+                          <Chip label="Uploading..." size="small" sx={{ backgroundColor: colors.blueAccent[700] }} />
+                        )}
+                        {fileObj.status === 'success' && (
+                          <Chip label="Uploaded" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
+                        )}
+                        {fileObj.status === 'error' && (
+                          <Chip label="Failed" size="small" sx={{ backgroundColor: colors.redAccent[700] }} />
+                        )}
                       </Box>
                     }
                   />
@@ -334,11 +380,14 @@ const FileUpload = () => {
                     <IconButton
                       edge="end"
                       onClick={() => removeFile(fileObj.id)}
+                      disabled={uploading || fileObj.status === 'uploading'}
                       sx={{
                         color: colors.redAccent[500],
                         '&:hover': {
                           backgroundColor: colors.redAccent[900],
                         },
+                        opacity: (uploading || fileObj.status === 'uploading') ? 0.5 : 1,
+                        cursor: (uploading || fileObj.status === 'uploading') ? 'not-allowed' : 'pointer',
                       }}
                     >
                       <DeleteIcon />
@@ -354,6 +403,7 @@ const FileUpload = () => {
               size="large"
               startIcon={<CheckCircleIcon />}
               onClick={handleUpload}
+              disabled={uploading}
               sx={{
                 marginTop: 2,
                 backgroundColor: colors.greenAccent[600],
@@ -366,7 +416,7 @@ const FileUpload = () => {
                 },
               }}
             >
-              Upload {files.length} File{files.length !== 1 ? 's' : ''}
+              {uploading ? 'Uploading...' : `Upload ${files.length} File${files.length !== 1 ? 's' : ''}`}
             </Button>
           </Paper>
         )}
