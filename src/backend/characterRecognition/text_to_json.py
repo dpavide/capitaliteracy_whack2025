@@ -221,3 +221,11 @@ if __name__ == "__main__":
         json.dump(final_results, f, indent=2)
     
     print(f"\nCombined results saved to {combined_output_path}")
+
+
+# Shopping
+# Travel
+# Entertainment 
+# Bills
+# Food
+# Everything Else

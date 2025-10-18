@@ -13,5 +13,18 @@ companies = {
     "Bill Payment - Electricity": "Bills",
     "Dividend Share - McDonalds Corp": "Everything Else",
     "_ Internet Transfer": "Everything Else",
-    "Opening Balance": "Opening Balance"
+    "Opening Balance": "Opening Balance",
+    "Bus Ticket": "Travel",
+    "McDonalds": "Food",
+    "H&M": "Shopping",
+    "Parents": "Everything Else",
+    "ATM Withdrawal": "Everything Else",
+    "Starbucks": "Food",
+    "WHSmiths": "Shopping",
+    "Steam": "Entertainment",
+    "Vue": "Entertainment",
+    "Uniqlo": "Shopping",
+    "Bus": "Travel",
+    "Phone Top-up": "Bills",
+    "Subway": "Food"
 }

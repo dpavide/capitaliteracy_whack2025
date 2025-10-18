@@ -268,7 +268,7 @@
         "amount": "$2.50",
         "balance": "$147.50",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Travel"
       },
       {
         "date-processed": "06-02-2021",
@@ -277,7 +277,7 @@
         "amount": "$8.75",
         "balance": "$138.75",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Food"
       },
       {
         "date-processed": "06-03-2021",
@@ -286,7 +286,7 @@
         "amount": "$45.00",
         "balance": "$93.75",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Shopping"
       },
       {
         "date-processed": "06-04-2021",
@@ -322,7 +322,7 @@
         "amount": "$4.50",
         "balance": "$89.26",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Food"
       },
       {
         "date-processed": "06-08-2021",
@@ -331,7 +331,7 @@
         "amount": "$12.40",
         "balance": "$76.86",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Shopping"
       },
       {
         "date-processed": "06-09-2021",
@@ -340,7 +340,7 @@
         "amount": "$19.99",
         "balance": "$56.87",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Entertainment"
       },
       {
         "date-processed": "06-10-2021",
@@ -349,7 +349,7 @@
         "amount": "$15.00",
         "balance": "$41.87",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Entertainment"
       },
       {
         "date-processed": "06-11-2021",
@@ -367,7 +367,7 @@
         "amount": "$30.00",
         "balance": "$41.87",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Shopping"
       },
       {
         "date-processed": "06-13-2021",
@@ -376,7 +376,7 @@
         "amount": "$10.00",
         "balance": "$31.87",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Travel"
       },
       {
         "date-processed": "06-14-2021",
@@ -385,7 +385,7 @@
         "amount": "$15.00",
         "balance": "$16.87",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Bills"
       },
       {
         "date-processed": "06-15-2021",
@@ -394,7 +394,7 @@
         "amount": "$6.50",
         "balance": "$10.37",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Food"
       }
     ],
     "summary": {
