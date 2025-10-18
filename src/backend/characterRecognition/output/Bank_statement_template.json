@@ -1,0 +1,152 @@
+{
+  "transactions": [
+    {
+      "date-processed": "06-01-2021",
+      "date-of-transaction": "",
+      "company-name": "Opening Balance",
+      "amount": "$4,500.25",
+      "balance": "$4,500.25",
+      "type": "opening_balance",
+      "company-type": "Opening Balance"
+    },
+    {
+      "date-processed": "06-02-2021",
+      "date-of-transaction": "06-02-2021",
+      "company-name": "Bus Ticket",
+      "amount": "$2.50",
+      "balance": "$147.50",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-02-2021",
+      "date-of-transaction": "06-02-2021",
+      "company-name": "McDonalds",
+      "amount": "$8.75",
+      "balance": "$138.75",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-03-2021",
+      "date-of-transaction": "06-03-2021",
+      "company-name": "H&M",
+      "amount": "$45.00",
+      "balance": "$93.75",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-04-2021",
+      "date-of-transaction": "06-04-2021",
+      "company-name": "Spotify",
+      "amount": "$9.99",
+      "balance": "$83.76",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-05-2021",
+      "date-of-transaction": "06-05-2021",
+      "company-name": "Parents",
+      "amount": "$40.00",
+      "balance": "$123.76",
+      "type": "deposit",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-06-2021",
+      "date-of-transaction": "06-06-2021",
+      "company-name": "ATM Withdrawal",
+      "amount": "$30.00",
+      "balance": "$93.76",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-07-2021",
+      "date-of-transaction": "06-07-2021",
+      "company-name": "Starbucks",
+      "amount": "$4.50",
+      "balance": "$89.26",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-08-2021",
+      "date-of-transaction": "06-08-2021",
+      "company-name": "WHSmiths",
+      "amount": "$12.40",
+      "balance": "$76.86",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-09-2021",
+      "date-of-transaction": "06-09-2021",
+      "company-name": "Steam",
+      "amount": "$19.99",
+      "balance": "$56.87",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-10-2021",
+      "date-of-transaction": "06-10-2021",
+      "company-name": "Vue",
+      "amount": "$15.00",
+      "balance": "$41.87",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-11-2021",
+      "date-of-transaction": "06-11-2021",
+      "company-name": "Parents",
+      "amount": "$30.00",
+      "balance": "$71.87",
+      "type": "deposit",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-12-2021",
+      "date-of-transaction": "06-12-2021",
+      "company-name": "Uniqlo",
+      "amount": "$30.00",
+      "balance": "$41.87",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-13-2021",
+      "date-of-transaction": "06-13-2021",
+      "company-name": "Bus",
+      "amount": "$10.00",
+      "balance": "$31.87",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-14-2021",
+      "date-of-transaction": "06-14-2021",
+      "company-name": "Phone Top-up",
+      "amount": "$15.00",
+      "balance": "$16.87",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    },
+    {
+      "date-processed": "06-15-2021",
+      "date-of-transaction": "06-15-2021",
+      "company-name": "Subway",
+      "amount": "$6.50",
+      "balance": "$10.37",
+      "type": "withdrawal",
+      "company-type": "Everything Else"
+    }
+  ],
+  "summary": {
+    "money_in": 70.0,
+    "money_out": 4559.88
+  }
+}
