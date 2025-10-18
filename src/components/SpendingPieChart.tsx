@@ -186,7 +186,7 @@ export default function SpendingPieChart({ chartType = 'Pie' }: { chartType?: st
       labels,
       colors: ["#1C64F2", "#16BDCA", "#9061F9", "#FDBA8C", "#E74694", "#6366F1", "#34D399"],
       chart: {
-        height: 360,
+        height: 420, // increased height
         width: "100%",
         type: "pie",
         fontFamily: "Inter, sans-serif",
@@ -229,7 +229,7 @@ export default function SpendingPieChart({ chartType = 'Pie' }: { chartType?: st
         {
           breakpoint: 480,
           options: {
-            chart: { height: 320 },
+            chart: { height: 360 },
           }
         }
       ]
@@ -258,13 +258,13 @@ export default function SpendingPieChart({ chartType = 'Pie' }: { chartType?: st
   }, []); // run once
 
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
+    <div className="w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <h5 style={{ margin: 0, fontSize: 16, fontWeight: 600 }} className="text-xl font-bold leading-none text-gray-900 dark:text-white me-1">Spending by Category</h5>
         <span style={{ fontSize: 12, color: '#6B7280' }}>{chartType} chart</span>
       </div>
 
-      <div className="py-6" id="pie-chart" style={{ minHeight: 360 }}></div>
+      <div className="py-6" id="pie-chart" style={{ minHeight: 420 }}></div>
     </div>
   );
 }

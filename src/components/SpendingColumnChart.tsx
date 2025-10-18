@@ -182,7 +182,7 @@ function SpendingColumnChart({
     const options: any = {
       colors: ['#1A56DB'],
       series: [{ name: 'Amount', data: chartData }],
-      chart: { type: 'bar', height: 320, fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
+      chart: { type: 'bar', height: 420, fontFamily: 'Inter, sans-serif', toolbar: { show: false } }, // increased height
       title: {
         text: title,
         align: 'center',
@@ -196,7 +196,7 @@ function SpendingColumnChart({
       xaxis: { labels: { style: { fontFamily: 'Inter, sans-serif' } }, axisBorder: { show: false }, axisTicks: { show: false } },
       yaxis: { labels: { formatter: (v: number) => '$' + Number(v).toFixed(0), style: { fontFamily: 'Inter, sans-serif' } } },
       fill: { opacity: 1 },
-      responsive: [{ breakpoint: 480, options: { chart: { height: 280 } } }],
+      responsive: [{ breakpoint: 480, options: { chart: { height: 360 } } }],
     };
 
     if (chartRef.current) {
@@ -231,13 +231,13 @@ function SpendingColumnChart({
 
   // Wrap the chart in the same white card container used by line & pie charts
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
+    <div className="w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <h5 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>{title}</h5>
         <span style={{ fontSize: 12, color: '#6B7280' }}>{chartType} chart</span>
       </div>
 
-      <div ref={containerRef} aria-label={`${title} - ${chartType} chart`} style={{ minHeight: 320 }} />
+      <div ref={containerRef} aria-label={`${title} - ${chartType} chart`} style={{ minHeight: 420 }} />
     </div>
   );
 }
