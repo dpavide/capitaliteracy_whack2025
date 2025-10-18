@@ -151,7 +151,8 @@
           return;
         }
 
-        navigate('/');
+        // Navigate to upload page after successful authentication
+        navigate('/upload');
       } catch (err) {
         console.error(err);
         setAuthError('Unexpected error. Please try again.');
