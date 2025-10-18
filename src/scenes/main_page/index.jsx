@@ -4,6 +4,7 @@ import { tokens } from '../../theme';
 import SpendingLineChart from '../../components/SpendingLineChart';
 import SpendingPieChart from '../../components/SpendingPieChart';
 import SpendingColumnChart from '../../components/SpendingColumnChart';
+import InteractivePieChart from '../../components/InteractivePieChart';
 
 const MainPage = () => {
   const theme = useTheme();
@@ -124,46 +125,8 @@ const MainPage = () => {
               padding: 4,
             }}
           >
-            {/* Goals Tab - Placeholder Content */}
-            <Typography
-              variant="h4"
-              sx={{
-                color: colors.gray[100],
-                marginBottom: 2,
-              }}
-            >
-              Financial Goals
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: colors.gray[300],
-                textAlign: 'center',
-                maxWidth: 600,
-              }}
-            >
-              Set and track your financial goals here. This section will be implemented soon.
-            </Typography>
-            
-            {/* Placeholder for future goals content */}
-            <Box
-              sx={{
-                marginTop: 4,
-                padding: 4,
-                backgroundColor: colors.primary[500],
-                borderRadius: 2,
-                width: '100%',
-                maxWidth: 800,
-                textAlign: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ color: colors.gray[200] }}>
-                🎯 Goals Feature Coming Soon
-              </Typography>
-              <Typography variant="body2" sx={{ color: colors.gray[300], marginTop: 2 }}>
-                Track savings goals, budget targets, and financial milestones
-              </Typography>
-            </Box>
+            {/* Goals Tab - Interactive Pie Chart */}
+            <InteractivePieChart />
           </Box>
         )}
       </Box>
