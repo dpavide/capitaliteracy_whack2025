@@ -6,4 +6,9 @@ python -m venv .venv
 
 .venv\Scripts\activate
 
-pip install -r requirements.txt
+To install all the requirements:
+
+Once inside the virtual environment (should see (.venv))
+
+- python -m pip install --upgrade pip setuptools wheel
+- python -m pip install --no-cache-dir -r requirements.txt
