@@ -1,6 +1,19 @@
-*.pyc
+node_modules/
+
+# Virtual environment
+venv/
+.env/
 .venv/
 
-.env
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+
+# macOS system files
 .DS_Store
-node_modules/
