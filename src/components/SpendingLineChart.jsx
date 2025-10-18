@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ApexCharts from 'apexcharts';
 
-function SpendingLineChart({ seriesData, categories } = {}) {
+function SpendingLineChart({ seriesData, categories, chartType = 'Line' } = {}) {
   const chartRef = useRef(null); // holds ApexCharts instance
   const containerRef = useRef(null); // DOM node for chart
 
@@ -107,10 +107,11 @@ function SpendingLineChart({ seriesData, categories } = {}) {
 
   return (
     <div className="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
-      <div className="flex justify-between mb-5">
-        <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <h5 style={{ margin: 0, fontSize: 16, fontWeight: 600 }} className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
           Daily Spending
         </h5>
+        <span style={{ fontSize: 12, color: '#6B7280' }}>{chartType} chart</span>
       </div>
 
       {/* chart container uses ref instead of id for robustness */}
@@ -120,6 +121,11 @@ function SpendingLineChart({ seriesData, categories } = {}) {
         aria-label="Line chart showing daily spending"
         style={{ height: 220 }}
       />
+
+      <div className="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between mt-2.5">
+        <div className="pt-5">
+        </div>
+      </div>
     </div>
   );
 }

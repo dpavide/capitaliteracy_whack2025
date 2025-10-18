@@ -164,64 +164,47 @@ const processColumnChartData = (data: typeof rawTransactionData) => {
   return chartData;
 };
 
-function SpendingColumnChart({ chartType = 'Column' }: { chartType?: string }) {
+function SpendingColumnChart({
+  chartType = 'Column',
+  title = 'Spending by Category',
+}: {
+  chartType?: string;
+  title?: string;
+}) {
   const chartRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (typeof document === 'undefined' || !containerRef.current) return;
 
     const chartData = processColumnChartData(rawTransactionData);
 
     const options: any = {
-      colors: ["#1A56DB"],
-      series: [
-        {
-          name: "Amount",
-          data: chartData, // objects with x/y are supported by ApexCharts
-        },
-      ],
-      chart: {
-        type: "bar",
-        height: 320,
-        fontFamily: "Inter, sans-serif",
-        toolbar: { show: false },
+      colors: ['#1A56DB'],
+      series: [{ name: 'Amount', data: chartData }],
+      chart: { type: 'bar', height: 320, fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
+      title: {
+        text: title,
+        align: 'center',
+        style: { fontSize: '14px', fontWeight: 600, fontFamily: 'Inter, sans-serif', color: '#111827' },
       },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: "60%",
-          borderRadiusApplication: "end",
-          borderRadius: 8,
-        },
-      },
-      tooltip: {
-        y: {
-          formatter: (val: number) => "$" + Number(val).toFixed(2)
-        }
-      },
+      plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadiusApplication: 'end', borderRadius: 8 } },
+      tooltip: { y: { formatter: (val: number) => `$${Number(val).toFixed(2)}` } },
       dataLabels: { enabled: false },
       grid: { show: false },
       legend: { show: false },
-      xaxis: {
-        labels: {
-          style: { fontFamily: "Inter, sans-serif" }
-        },
-        axisBorder: { show: false },
-        axisTicks: { show: false },
-      },
-      yaxis: {
-        labels: {
-          formatter: (value: number) => '$' + Number(value).toFixed(0),
-          style: { fontFamily: "Inter, sans-serif" }
-        }
-      },
+      xaxis: { labels: { style: { fontFamily: 'Inter, sans-serif' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+      yaxis: { labels: { formatter: (v: number) => '$' + Number(v).toFixed(0), style: { fontFamily: 'Inter, sans-serif' } } },
       fill: { opacity: 1 },
+      responsive: [{ breakpoint: 480, options: { chart: { height: 280 } } }],
     };
 
-    // destroy previous instance (HMR / StrictMode)
     if (chartRef.current) {
-      try { chartRef.current.destroy(); } catch (e) { /* ignore */ }
+      try {
+        chartRef.current.destroy();
+      } catch (e) {
+        /* ignore */
+      }
       chartRef.current = null;
     }
 
@@ -236,19 +219,25 @@ function SpendingColumnChart({ chartType = 'Column' }: { chartType?: string }) {
 
     return () => {
       if (chartRef.current) {
-        try { chartRef.current.destroy(); } catch (e) { /* ignore */ }
+        try {
+          chartRef.current.destroy();
+        } catch (e) {
+          /* ignore */
+        }
         chartRef.current = null;
       }
     };
-  }, []); // run once
+  }, [title]); // re-run if title changes
 
+  // Wrap the chart in the same white card container used by line & pie charts
   return (
-    <div style={{ width: '100%' }}>
+    <div className="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <h5 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Spending by Category</h5>
+        <h5 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>{title}</h5>
         <span style={{ fontSize: 12, color: '#6B7280' }}>{chartType} chart</span>
       </div>
-      <div ref={containerRef} aria-label={`${chartType} chart showing spending by category`} style={{ minHeight: 320 }} />
+
+      <div ref={containerRef} aria-label={`${title} - ${chartType} chart`} style={{ minHeight: 320 }} />
     </div>
   );
 }
