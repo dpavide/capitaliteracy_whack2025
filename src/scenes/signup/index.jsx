@@ -139,7 +139,6 @@ const SignUp = () => {
 
       const ageFromDob = calculateAge(formData.dob);
 
-      // --- FIXED LOGIC ---
       // Payload for the 'users' table (core user info)
       const userPayload = {
         id: userId,
@@ -167,17 +166,26 @@ const SignUp = () => {
         supabase.from(PROFILES_TABLE).upsert(profilePayload)
       ]);
 
-      // Check for errors from either operation
+      // Check for errors from either operation, with specific RLS check
       if (userResult.error || profileResult.error) {
-        const userError = userResult.error ? `Users table error: ${userResult.error.message}` : '';
-        const profileError = profileResult.error ? `Profiles table error: ${profileResult.error.message}` : '';
-        alert(`Error saving profile data.\n${userError}\n${profileError}`);
+        const userError = userResult.error;
+        const profileError = profileResult.error;
+
+        // Check for the specific RLS error to provide a helpful message
+        if (userError?.message.includes('violates row-level security') || profileError?.message.includes('violates row-level security')) {
+            alert("Database Security Error: Your profile could not be saved. This usually happens if email confirmation is enabled in your project. Please disable it in your Supabase Auth settings for a one-step signup, or verify your email and then log in.");
+        } else {
+            const userErrorMessage = userError ? `Users table error: ${userError.message}` : '';
+            const profileErrorMessage = profileError ? `Profiles table error: ${profileError.message}` : '';
+            alert(`Error saving profile data.\n${userErrorMessage}\n${profileErrorMessage}`);
+        }
+        
         setLoading(false);
         return;
       }
 
-      alert('Sign up successful! Please check your email for a verification link, then log in.');
-      navigate('/login');
+      alert('Sign up successful!');
+      navigate('/main_page'); // Redirect to the main page
     } catch (err) {
       console.error(err);
       alert('An unexpected error occurred. Please try again.');
@@ -273,7 +281,7 @@ const SignUp = () => {
             helperText={errors.annual_income}
             margin="normal"
             InputProps={{
-              startAdornment: <InputAdornment position="start">£</InputAdornment>,
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
             }}
           />
 
@@ -299,9 +307,9 @@ const SignUp = () => {
                 </Select>
                 <FormHelperText>{errors.buying_timeline}</FormHelperText>
               </FormControl>
-              <Typography gutterBottom sx={{ mt: 2 }}>Target Home Price: £{formData.target_home_price.toLocaleString()}</Typography>
+              <Typography gutterBottom sx={{ mt: 2 }}>Target Home Price: ${formData.target_home_price.toLocaleString()}</Typography>
               <Slider value={formData.target_home_price} onChange={handleSliderChange('target_home_price')} valueLabelDisplay="auto" step={10000} min={50000} max={1500000} />
-              <Typography gutterBottom sx={{ mt: 2 }}>Down Payment: £{formData.down_payment.toLocaleString()}</Typography>
+              <Typography gutterBottom sx={{ mt: 2 }}>Down Payment: ${formData.down_payment.toLocaleString()}</Typography>
               <Slider value={formData.down_payment} onChange={handleSliderChange('down_payment')} valueLabelDisplay="auto" step={1000} min={0} max={200000} />
             </Box>
           )}
