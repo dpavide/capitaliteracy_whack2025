@@ -15,6 +15,16 @@
       "date-processed": "01-01-2025",
       "date-of-transaction": "",
       "company-name": "Opening Balance",
+      "amount": "\u00a32,150.00",
+      "balance": "\u00a32,150.00",
+      "type": "opening_balance",
+      "company-type": "Opening Balance",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-01-2025",
+      "date-of-transaction": "",
+      "company-name": "Opening Balance",
       "amount": "\u00a33,200.00",
       "balance": "\u00a33,200.00",
       "type": "opening_balance",
@@ -40,6 +50,16 @@
       "type": "deposit",
       "company-type": "Everything Else",
       "card-type": "credit"
+    },
+    {
+      "date-processed": "01-04-2025",
+      "date-of-transaction": "01-04-2025",
+      "company-name": "Shell Petrol - Canary Wharf",
+      "amount": "\u00a345.00",
+      "balance": "\u00a32,630.49",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "debit"
     },
     {
       "date-processed": "01-04-2025",
@@ -74,6 +94,16 @@
     {
       "date-processed": "01-06-2025",
       "date-of-transaction": "01-06-2025",
+      "company-name": "Pret A Manger - Lunch",
+      "amount": "\u00a38.75",
+      "balance": "\u00a32,706.49",
+      "type": "deposit",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-06-2025",
+      "date-of-transaction": "01-06-2025",
       "company-name": "Shell Petrol",
       "amount": "\u00a360.00",
       "balance": "\u00a31,640.47",
@@ -102,6 +132,16 @@
       "card-type": "credit"
     },
     {
+      "date-processed": "01-08-2025",
+      "date-of-transaction": "01-08-2025",
+      "company-name": "ASOS - Clothing",
+      "amount": "\u00a3132.40",
+      "balance": "\u00a31,838.89",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
       "date-processed": "01-09-2025",
       "date-of-transaction": "01-09-2025",
       "company-name": "Uber Eats - Food Delivery",
@@ -110,6 +150,16 @@
       "type": "deposit",
       "company-type": "Eating Out",
       "card-type": "credit"
+    },
+    {
+      "date-processed": "01-09-2025",
+      "date-of-transaction": "01-09-2025",
+      "company-name": "Uber Eats - Food Delivery",
+      "amount": "\u00a334.50",
+      "balance": "\u00a31,873.39",
+      "type": "deposit",
+      "company-type": "Eating Out",
+      "card-type": "debit"
     },
     {
       "date-processed": "01-10-2025",
@@ -142,6 +192,16 @@
       "card-type": "credit"
     },
     {
+      "date-processed": "01-13-2025",
+      "date-of-transaction": "01-13-2025",
+      "company-name": "Car Payment - BMW Finance",
+      "amount": "\u00a3486.22",
+      "balance": "\u00a33,091.50",
+      "type": "deposit",
+      "company-type": "Recurring Debts",
+      "card-type": "debit"
+    },
+    {
       "date-processed": "01-14-2025",
       "date-of-transaction": "01-14-2025",
       "company-name": "Hotel Booking - Premier Inn",
@@ -150,6 +210,16 @@
       "type": "deposit",
       "company-type": "Everything Else",
       "card-type": "credit"
+    },
+    {
+      "date-processed": "01-14-2025",
+      "date-of-transaction": "01-14-2025",
+      "company-name": "Hotel Booking - Premier Inn",
+      "amount": "\u00a3120.00",
+      "balance": "\u00a33,211.50",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "debit"
     },
     {
       "date-processed": "01-14-2025",
@@ -170,6 +240,16 @@
       "type": "deposit",
       "company-type": "Everything Else",
       "card-type": "credit"
+    },
+    {
+      "date-processed": "01-15-2025",
+      "date-of-transaction": "01-15-2025",
+      "company-name": "Netflix Subscription",
+      "amount": "\u00a310.99",
+      "balance": "\u00a33,222.49",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "debit"
     },
     {
       "date-processed": "01-15-2025",
@@ -253,8 +333,8 @@
     }
   ],
   "summary": {
-    "money_in": 6505.46,
-    "money_out": 2267.22,
-    "count": 25
+    "money_in": 7210.92,
+    "money_out": 2399.62,
+    "count": 33
   }
 }
