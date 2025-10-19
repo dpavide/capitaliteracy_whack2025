@@ -8,8 +8,7 @@
       "amount": "\u00a3245.99",
       "balance": "\u00a32,395.99",
       "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "credit"
+      "company-type": "Shopping"
     },
     {
       "date-processed": "01-03-2025",
@@ -18,8 +17,7 @@
       "amount": "\u00a3189.50",
       "balance": "\u00a32,585.49",
       "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "credit"
+      "company-type": "Shopping"
     },
     {
       "date-processed": "01-05-2025",
@@ -28,8 +26,7 @@
       "amount": "\u00a367.25",
       "balance": "\u00a32,697.74",
       "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "credit"
+      "company-type": "Shopping"
     },
     {
       "date-processed": "01-10-2025",
@@ -38,8 +35,7 @@
       "amount": "\u00a32.99",
       "balance": "\u00a31,876.38",
       "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "credit"
+      "company-type": "Shopping"
     },
     {
       "date-processed": "01-11-2025",
@@ -48,8 +44,7 @@
       "amount": "\u00a3650.00",
       "balance": "\u00a32,526.38",
       "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "credit"
+      "company-type": "Shopping"
     },
     {
       "date-processed": "01-12-2025",
@@ -58,8 +53,7 @@
       "amount": "\u00a378.90",
       "balance": "\u00a32,605.28",
       "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "credit"
+      "company-type": "Shopping"
     }
   ],
   "summary": {

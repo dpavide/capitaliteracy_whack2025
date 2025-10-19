@@ -129,8 +129,8 @@ def character_recognition():
     script_directory = os.path.dirname(os.path.abspath(__file__))
 
     # Try to find usable credit/debit directories (search likely places including src/backend/credit)
-    credit_dir = _find_candidate_dir(script_directory, "credit")
-    debit_dir = _find_candidate_dir(script_directory, "debit")
+    credit_dir = _find_candidate_dir(script_directory, "creditStatements")
+    debit_dir = _find_candidate_dir(script_directory, "debitStatements")
 
     print(f"Debug: resolved credit_dir -> {credit_dir}")
     print(f"Debug: resolved debit_dir  -> {debit_dir}")

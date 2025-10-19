@@ -220,9 +220,9 @@ if __name__ == "__main__":
         try:
             # Determine card-type from the folder part of the key
             folder = filename_key.split('/', 1)[0].lower() if '/' in filename_key else ""
-            if folder == "credit":
+            if folder == "creditStatements":
                 card_type = "credit"
-            elif folder == "debit":
+            elif folder == "debitStatements":
                 card_type = "debit"
             else:
                 # default/unknown - leave None (shouldn't happen since we only collect credit/debit)

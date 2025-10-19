@@ -8,8 +8,7 @@
       "amount": "\u00a385.60",
       "balance": "\u00a33,554.87",
       "type": "withdrawal",
-      "company-type": "Bills",
-      "card-type": "debit"
+      "company-type": "Bills"
     },
     {
       "date-processed": "01-22-2025",
@@ -18,8 +17,7 @@
       "amount": "\u00a328.50",
       "balance": "\u00a33,238.08",
       "type": "withdrawal",
-      "company-type": "Bills",
-      "card-type": "debit"
+      "company-type": "Bills"
     }
   ],
   "summary": {
