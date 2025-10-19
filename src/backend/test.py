@@ -2,14 +2,52 @@ from importlib.resources import contents
 from dotenv import load_dotenv
 import os
 from google import genai
+import sys
 
-from src.backend.characterRecognition.text_to_json import text_to_json
+from characterRecognition.text_to_json import run_json_text
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # The client gets the API key from the environment variable `GEMINI_API_KEY`.
 load_dotenv()  # loads GEMINI_API_KEY from .env
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-var = text_to_json()
+full_json = run_json_text()
+
+goal_json = [
+  {
+    "name": "Recurring Debts",
+    "percentage": 20
+  },
+  {
+    "name": "Travel",
+    "percentage": 15
+  },
+  {
+    "name": "Entertainment",
+    "percentage": 10
+  },
+  {
+    "name": "Shopping",
+    "percentage": 15
+  },
+  {
+    "name": "Bills",
+    "percentage": 18
+  },
+  {
+    "name": "Eating Out",
+    "percentage": 2
+  },
+  {
+    "name": "Everything Else",
+    "percentage": 20
+    }
+]
+
+goal = "10000"
+months_to_goal = 12
+
 
 TIPS_PROMPT = f""" You are Gemini Finance Coach, a UK-focused assistant that delivers three short, practical tips to help a user make smarter use of their credit and current spending. You will be given:
 
@@ -74,13 +112,13 @@ Optional: For purchases ≥ £100, you may note credit card purchase protection 
 Output format (STRICT)
 
 Return ONLY a JSON object with exactly three tips:
-{
+
 "insights": [
 "Tip 1 (max two sentences).",
 "Tip 2 (max two sentences).",
 "Tip 3 (max two sentences)."
 ]
-}
+
 
 Each insight must start with a verb, include at least one concrete number (£ or % where appropriate), and (when relevant) name the specific category (e.g., “Eating Out”).
 
@@ -94,11 +132,15 @@ Never fabricate credit limits, interest rates, or lender names. Avoid promising 
 
 Your goal: three crisp, high-impact, doable steps the user can take this month that improve credit health and free cash toward their stated goal."""
 
-CONTEXT_PROMPT = f""" You are Gemini Money Mentor — a UK-centric, conversational assistant who helps users understand their spending and credit behaviour and build healthier money habits. You will be given:
+CONTEXT_PROMPT = f""" You are Gemini Money Mentor - a UK-centric, conversational assistant who helps users understand their spending and credit behaviour and build healthier money habits. You will be given:
 
 A combined transactions JSON with fields: date-processed, date-of-transaction, company-name, amount, balance, type, company-type (one of: Recurring Debts, Shopping, Travel, Entertainment, Bills, Eating Out, Everything Else), card-type (credit|debit).
 
-A target spending mix JSON: [{name, percentage}] across the same seven categories.
+The combined json is {full_json}
+
+The current goal percentages are {goal_json}
+
+A target spending mix JSON across the same seven categories.
 
 Profile: age (years), numerical_literacy ('basic'|'intermediate'|'advanced'), annual_salary_gbp (number), credit_score_uk_0_to_999 (0–999), saving_goal (string) and saving_goal_cost_gbp (number). Optional: name.
 
@@ -217,6 +259,8 @@ End with a simple invitation: “Want me to recheck next month if you share upda
 Your goal: help the user see where their money goes, learn one or two key credit behaviours, and leave with 2–3 concrete £ actions tied to their goal — all explained at the right reading level and appropriate for their age."""
 
 response = client.models.generate_content(
-    model="gemini-2.5-flash", contents = SYSTEM_PROMPT
+    model="gemini-2.5-flash", contents = CONTEXT_PROMPT, config={"systemInstruction": TIPS_PROMPT,
+        # optional: sampling / response options
+        "responseMimeType": "text/plain",}
 )
 print(response.text)

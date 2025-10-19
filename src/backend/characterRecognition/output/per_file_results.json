@@ -8,7 +8,8 @@
         "amount": "\u00a32,150.00",
         "balance": "\u00a32,150.00",
         "type": "opening_balance",
-        "company-type": "Opening Balance"
+        "company-type": "Opening Balance",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-02-2025",
@@ -17,7 +18,8 @@
         "amount": "\u00a3245.99",
         "balance": "\u00a32,395.99",
         "type": "deposit",
-        "company-type": "Shopping"
+        "company-type": "Shopping",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-03-2025",
@@ -26,7 +28,8 @@
         "amount": "\u00a3189.50",
         "balance": "\u00a32,585.49",
         "type": "deposit",
-        "company-type": "Shopping"
+        "company-type": "Shopping",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-04-2025",
@@ -35,7 +38,8 @@
         "amount": "\u00a345.00",
         "balance": "\u00a32,630.49",
         "type": "deposit",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-05-2025",
@@ -44,7 +48,8 @@
         "amount": "\u00a367.25",
         "balance": "\u00a32,697.74",
         "type": "deposit",
-        "company-type": "Shopping"
+        "company-type": "Shopping",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-06-2025",
@@ -53,7 +58,8 @@
         "amount": "\u00a38.75",
         "balance": "\u00a32,706.49",
         "type": "deposit",
-        "company-type": "Eating Out"
+        "company-type": "Eating Out",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-08-2025",
@@ -62,7 +68,8 @@
         "amount": "\u00a3132.40",
         "balance": "\u00a31,838.89",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-09-2025",
@@ -71,7 +78,8 @@
         "amount": "\u00a334.50",
         "balance": "\u00a31,873.39",
         "type": "deposit",
-        "company-type": "Eating Out"
+        "company-type": "Eating Out",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-10-2025",
@@ -80,7 +88,8 @@
         "amount": "\u00a32.99",
         "balance": "\u00a31,876.38",
         "type": "deposit",
-        "company-type": "Shopping"
+        "company-type": "Shopping",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-11-2025",
@@ -89,7 +98,8 @@
         "amount": "\u00a3650.00",
         "balance": "\u00a32,526.38",
         "type": "deposit",
-        "company-type": "Shopping"
+        "company-type": "Shopping",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-12-2025",
@@ -98,7 +108,8 @@
         "amount": "\u00a378.90",
         "balance": "\u00a32,605.28",
         "type": "deposit",
-        "company-type": "Shopping"
+        "company-type": "Shopping",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-13-2025",
@@ -107,7 +118,8 @@
         "amount": "\u00a3486.22",
         "balance": "\u00a33,091.50",
         "type": "deposit",
-        "company-type": "Recurring Debts"
+        "company-type": "Recurring Debts",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-14-2025",
@@ -116,7 +128,8 @@
         "amount": "\u00a3120.00",
         "balance": "\u00a33,211.50",
         "type": "deposit",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "credit"
       },
       {
         "date-processed": "01-15-2025",
@@ -125,7 +138,156 @@
         "amount": "\u00a310.99",
         "balance": "\u00a33,222.49",
         "type": "deposit",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "credit"
+      }
+    ],
+    "summary": {
+      "money_in": 1940.09,
+      "money_out": 867.6
+    }
+  },
+  "debit/1760846348874-56283252-adultCredit2.pdf": {
+    "transactions": [
+      {
+        "date-processed": "01-01-2025",
+        "date-of-transaction": "",
+        "company-name": "Opening Balance",
+        "amount": "\u00a32,150.00",
+        "balance": "\u00a32,150.00",
+        "type": "opening_balance",
+        "company-type": "Opening Balance",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-02-2025",
+        "date-of-transaction": "01-02-2025",
+        "company-name": "Amazon UK - Electronics",
+        "amount": "\u00a3245.99",
+        "balance": "\u00a32,395.99",
+        "type": "deposit",
+        "company-type": "Shopping",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-03-2025",
+        "date-of-transaction": "01-03-2025",
+        "company-name": "John Lewis - Home Goods",
+        "amount": "\u00a3189.50",
+        "balance": "\u00a32,585.49",
+        "type": "deposit",
+        "company-type": "Shopping",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-04-2025",
+        "date-of-transaction": "01-04-2025",
+        "company-name": "Shell Petrol - Canary Wharf",
+        "amount": "\u00a345.00",
+        "balance": "\u00a32,630.49",
+        "type": "deposit",
+        "company-type": "Everything Else",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-05-2025",
+        "date-of-transaction": "01-05-2025",
+        "company-name": "eBay - Vintage Clothing",
+        "amount": "\u00a367.25",
+        "balance": "\u00a32,697.74",
+        "type": "deposit",
+        "company-type": "Shopping",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-06-2025",
+        "date-of-transaction": "01-06-2025",
+        "company-name": "Pret A Manger - Lunch",
+        "amount": "\u00a38.75",
+        "balance": "\u00a32,706.49",
+        "type": "deposit",
+        "company-type": "Eating Out",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-08-2025",
+        "date-of-transaction": "01-08-2025",
+        "company-name": "ASOS - Clothing",
+        "amount": "\u00a3132.40",
+        "balance": "\u00a31,838.89",
+        "type": "withdrawal",
+        "company-type": "Everything Else",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-09-2025",
+        "date-of-transaction": "01-09-2025",
+        "company-name": "Uber Eats - Food Delivery",
+        "amount": "\u00a334.50",
+        "balance": "\u00a31,873.39",
+        "type": "deposit",
+        "company-type": "Eating Out",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-10-2025",
+        "date-of-transaction": "01-10-2025",
+        "company-name": "Apple Store - App Purchase",
+        "amount": "\u00a32.99",
+        "balance": "\u00a31,876.38",
+        "type": "deposit",
+        "company-type": "Shopping",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-11-2025",
+        "date-of-transaction": "01-11-2025",
+        "company-name": "British Airways - Flight Booking",
+        "amount": "\u00a3650.00",
+        "balance": "\u00a32,526.38",
+        "type": "deposit",
+        "company-type": "Shopping",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-12-2025",
+        "date-of-transaction": "01-12-2025",
+        "company-name": "Waitrose - Grocery",
+        "amount": "\u00a378.90",
+        "balance": "\u00a32,605.28",
+        "type": "deposit",
+        "company-type": "Shopping",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-13-2025",
+        "date-of-transaction": "01-13-2025",
+        "company-name": "Car Payment - BMW Finance",
+        "amount": "\u00a3486.22",
+        "balance": "\u00a33,091.50",
+        "type": "deposit",
+        "company-type": "Recurring Debts",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-14-2025",
+        "date-of-transaction": "01-14-2025",
+        "company-name": "Hotel Booking - Premier Inn",
+        "amount": "\u00a3120.00",
+        "balance": "\u00a33,211.50",
+        "type": "deposit",
+        "company-type": "Everything Else",
+        "card-type": "debit"
+      },
+      {
+        "date-processed": "01-15-2025",
+        "date-of-transaction": "01-15-2025",
+        "company-name": "Netflix Subscription",
+        "amount": "\u00a310.99",
+        "balance": "\u00a33,222.49",
+        "type": "deposit",
+        "company-type": "Everything Else",
+        "card-type": "debit"
       }
     ],
     "summary": {
@@ -142,7 +304,8 @@
         "amount": "\u00a33,200.00",
         "balance": "\u00a33,200.00",
         "type": "opening_balance",
-        "company-type": "Opening Balance"
+        "company-type": "Opening Balance",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-03-2025",
@@ -151,7 +314,8 @@
         "amount": "\u00a31,402.13",
         "balance": "\u00a31,797.87",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-04-2025",
@@ -160,7 +324,8 @@
         "amount": "\u00a392.45",
         "balance": "\u00a31,705.42",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-05-2025",
@@ -169,7 +334,8 @@
         "amount": "\u00a34.95",
         "balance": "\u00a31,700.47",
         "type": "withdrawal",
-        "company-type": "Eating Out"
+        "company-type": "Eating Out",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-06-2025",
@@ -178,7 +344,8 @@
         "amount": "\u00a360.00",
         "balance": "\u00a31,640.47",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-07-2025",
@@ -187,7 +354,8 @@
         "amount": "\u00a32,000.00",
         "balance": "\u00a33,640.47",
         "type": "deposit",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-09-2025",
@@ -196,7 +364,8 @@
         "amount": "\u00a385.60",
         "balance": "\u00a33,554.87",
         "type": "withdrawal",
-        "company-type": "Bills"
+        "company-type": "Bills",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-10-2025",
@@ -205,7 +374,8 @@
         "amount": "\u00a335.00",
         "balance": "\u00a33,519.87",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-12-2025",
@@ -214,7 +384,8 @@
         "amount": "\u00a368.90",
         "balance": "\u00a33,450.97",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-14-2025",
@@ -223,7 +394,8 @@
         "amount": "\u00a354.20",
         "balance": "\u00a33,396.77",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-15-2025",
@@ -232,7 +404,8 @@
         "amount": "\u00a39.99",
         "balance": "\u00a33,386.78",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-16-2025",
@@ -241,7 +414,8 @@
         "amount": "\u00a345.00",
         "balance": "\u00a33,341.78",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-18-2025",
@@ -250,7 +424,8 @@
         "amount": "\u00a37.20",
         "balance": "\u00a33,334.58",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-20-2025",
@@ -259,7 +434,8 @@
         "amount": "\u00a368.00",
         "balance": "\u00a33,266.58",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-22-2025",
@@ -268,7 +444,8 @@
         "amount": "\u00a328.50",
         "balance": "\u00a33,238.08",
         "type": "withdrawal",
-        "company-type": "Bills"
+        "company-type": "Bills",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-25-2025",
@@ -277,7 +454,8 @@
         "amount": "\u00a362.75",
         "balance": "\u00a33,175.33",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-30-2025",
@@ -286,7 +464,8 @@
         "amount": "\u00a33,800.00",
         "balance": "\u00a36,975.33",
         "type": "deposit",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-31-2025",
@@ -295,7 +474,8 @@
         "amount": "\u00a3150.00",
         "balance": "\u00a36,825.33",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       },
       {
         "date-processed": "01-31-2025",
@@ -304,7 +484,8 @@
         "amount": "\u00a374.25",
         "balance": "\u00a36,751.08",
         "type": "withdrawal",
-        "company-type": "Everything Else"
+        "company-type": "Everything Else",
+        "card-type": "debit"
       }
     ],
     "summary": {
