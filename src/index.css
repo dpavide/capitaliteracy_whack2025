@@ -1,4 +1,11 @@
 @import "tailwindcss";
+/* Capital One brand colors */
+:root {
+  --brand-blue: #0047bb;
+  --brand-red: #d0343a;
+  --brand-white: #ffffff;
+}
+
 /* Global Style */
 html,
 body,
@@ -6,7 +13,26 @@ body,
   height: 100%;
   width: 100%;
   font-family: "Source Sans 3", sans-serif;
+  /* brand surface + readable text */
+  background: var(--brand-white); /* added */
+  color: #0b1220;                 /* added */
 }
+
+/* Brand-aligned links */
+a {
+  color: var(--brand-blue);
+}
+a:hover {
+  color: var(--brand-red);
+  text-decoration: underline;
+}
+
+/* Minimal MUI brand nudges (in case CssBaseline isn't used) */
+.MuiPaper-root { background-color: var(--brand-white) !important; } /* added */
+.MuiButton-containedPrimary { background-color: var(--brand-blue) !important; } /* added */
+.MuiButton-containedPrimary:hover { background-color: #003a96 !important; } /* added */
+.MuiLink-root { color: var(--brand-blue); } /* added */
+.MuiLink-root:hover { color: var(--brand-red); } /* added */
 
 ::-webkit-scrollbar {
   width: 10px;
@@ -14,15 +40,15 @@ body,
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #e0e0e0;
+  background: var(--brand-white);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--brand-blue);
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-track:hover {
-  background: #555;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-red);
 }

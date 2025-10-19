@@ -3,6 +3,14 @@ import { useMemo } from "react";
 import { useState } from "react";
 import { createContext } from "react";
 
+/* Capital One brand colors */
+const BRAND = {
+  blue: "#0047bb",
+  red: "#d0343a",
+  white: "#ffffff",
+  darkBg: "#0b1220",
+};
+
 // Color Design Tokens
 export const tokens = (mode) => ({
   ...(mode === "dark"
@@ -131,36 +139,20 @@ export const themeSettings = (mode) => {
       mode: mode,
       ...(mode === "dark"
         ? {
-            primary: {
-              main: colors.primary[500],
-            },
-            secondary: {
-              main: colors.greenAccent[500],
-            },
-            neutral: {
-              dark: colors.gray[700],
-              main: colors.gray[500],
-              light: colors.gray[100],
-            },
-            background: {
-              default: colors.primary[500],
-            },
+            primary: { main: BRAND.blue },
+            secondary: { main: BRAND.red },
+            error: { main: BRAND.red },
+            text: { primary: "#e5e7eb", secondary: "#cbd5e1" },
+            background: { default: BRAND.darkBg, paper: "#111827" },
+            divider: "rgba(255,255,255,0.12)",
           }
         : {
-            primary: {
-              main: colors.primary[100],
-            },
-            secondary: {
-              main: colors.greenAccent[500],
-            },
-            neutral: {
-              dark: colors.gray[700],
-              main: colors.gray[500],
-              light: colors.gray[100],
-            },
-            background: {
-              default: colors.primary[500],
-            },
+            primary: { main: BRAND.blue },
+            secondary: { main: BRAND.red },
+            error: { main: BRAND.red },
+            text: { primary: "#0b1220", secondary: "#334155" },
+            background: { default: BRAND.white, paper: BRAND.white },
+            divider: "rgba(2,6,23,0.12)",
           }),
     },
     typography: {
@@ -200,14 +192,16 @@ export const ColorModeContext = createContext({
 });
 
 export const useMode = () => {
-  const [mode, setMode] = useState("dark");
+  const [mode, setMode] = useState("light"); // changed: default to light
 
-  const colorMode = useMemo(() => ({
-    toggleColorMode: () =>
-      setMode((prev) => (prev === "light" ? "dark" : "light")),
-  }));
-
-  const theme = useMemo(() => createTheme(themeSettings(mode), [mode]));
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () =>
+        setMode((prev) => (prev === "light" ? "dark" : "light")),
+    }),
+    [] // added deps
+  ); // fixed: pass deps to useMemo (not to createTheme)
+  const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
 
   return [theme, colorMode];
 };
