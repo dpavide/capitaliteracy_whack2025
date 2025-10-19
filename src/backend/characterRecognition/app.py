@@ -18,6 +18,17 @@ except Exception as e:
     run_json_text = None
     print("Warning: couldn't import run_json_text():", e)
 
+# Try to import find_percentages if available
+try:
+    # user code previously referenced characterRecognition.find_percentages
+    # Try both local and package import names (robust)
+    try:
+        from characterRecognition.find_percentages import find_percentages
+    except Exception:
+        from find_percentages import find_percentages
+except Exception:
+    find_percentages = None
+
 BASE_DIR = Path(__file__).resolve().parent
 CREDIT_DIR = BASE_DIR / "credit"
 DEBIT_DIR = BASE_DIR / "debit"
@@ -32,11 +43,84 @@ MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024  # 100MB
 
 app = Flask(__name__)
 # Allow the Vite dev server origin (adjust if you host frontend elsewhere)
-CORS(app, origins=["http://localhost:5173"])
+CORS(app, origins=[
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000"
+])
 
 # In-memory job store
 _jobs = {}  # jobid -> {status, queue (for SSE messages), result, error, started_at, finished_at}
 _jobs_lock = threading.Lock()
+
+# ------------------------------------------------------------------
+# New: simple in-memory storage for posted "percentages" data
+# ------------------------------------------------------------------
+# Structure:
+#   LATEST_PERCENTAGES = { "jobId": "...", "percentages": {...} | [ {name,percentage} ], "received_at": timestamp }
+#   PERCENTAGES_BY_JOB = jobId -> same payload
+LATEST_PERCENTAGES = None
+PERCENTAGES_BY_JOB = {}
+PERCENTAGES_LOCK = threading.Lock()
+
+
+@app.route("/api/spending", methods=["POST"])
+def post_spending():
+    """
+    Accept JSON:
+    {
+      "jobId": "optional",
+      "percentages": { "Rent": 30, "Food": 20, ... }   OR
+      "percentages": [ {"name": "...", "percentage": 30}, ... ]
+    }
+    Stores it as the latest and by jobId (if provided).
+    """
+    global LATEST_PERCENTAGES, PERCENTAGES_BY_JOB
+    try:
+        payload = request.get_json(force=True)
+    except Exception:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    if not payload or "percentages" not in payload:
+        return jsonify({"error": "Missing 'percentages' field"}), 400
+
+    jobid = payload.get("jobId") or uuid.uuid4().hex
+    percentages = payload["percentages"]
+    now = time()
+
+    rec = {"jobId": jobid, "percentages": percentages, "received_at": now}
+
+    with PERCENTAGES_LOCK:
+        LATEST_PERCENTAGES = rec
+        PERCENTAGES_BY_JOB[jobid] = rec
+
+    return jsonify({"message": "Percentages stored", "jobId": jobid}), 200
+
+
+@app.route("/api/spending/latest", methods=["GET"])
+def get_spending_latest():
+    """
+    Return the last posted percentages (or 404 if none).
+    """
+    with PERCENTAGES_LOCK:
+        if LATEST_PERCENTAGES is None:
+            return jsonify({"error": "No data yet"}), 404
+        return jsonify(LATEST_PERCENTAGES), 200
+
+
+@app.route("/api/spending/<jobid>", methods=["GET"])
+def get_spending_by_job(jobid):
+    with PERCENTAGES_LOCK:
+        rec = PERCENTAGES_BY_JOB.get(jobid)
+        if rec is None:
+            return jsonify({"error": "Not found"}), 404
+        return jsonify(rec), 200
+
+
+# ------------------------------------------------------------------
+# End of added endpoints
+# ------------------------------------------------------------------
 
 
 def allowed_file(fname: str):
@@ -46,7 +130,7 @@ def allowed_file(fname: str):
 
 def save_file(file_storage, dest_folder: Path):
     orig = secure_filename(file_storage.filename)
-    uid = f"{int(time()*1000)}-{uuid.uuid4().hex[:8]}"
+    uid = f"{int(time() * 1000)}-{uuid.uuid4().hex[:8]}"
     saved_name = f"{uid}-{orig}"
     saved_path = dest_folder / saved_name
     file_storage.save(saved_path)
@@ -86,7 +170,8 @@ def upload_credit():
         if err:
             return jsonify({"error": err}), 400
         name, path = save_file(f, CREDIT_DIR)
-        return jsonify({"message": "Credit statement uploaded successfully", "filename": name, "path": path, "size": os.path.getsize(path)}), 200
+        return jsonify({"message": "Credit statement uploaded successfully", "filename": name, "path": path,
+                        "size": os.path.getsize(path)}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -99,7 +184,8 @@ def upload_debit():
         if err:
             return jsonify({"error": err}), 400
         name, path = save_file(f, DEBIT_DIR)
-        return jsonify({"message": "Debit statement uploaded successfully", "filename": name, "path": path, "size": os.path.getsize(path)}), 200
+        return jsonify({"message": "Debit statement uploaded successfully", "filename": name, "path": path,
+                        "size": os.path.getsize(path)}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -137,11 +223,54 @@ def serve_output(filename):
     return send_from_directory(OUTPUT_DIR, filename, as_attachment=False)
 
 
+def _try_load_percentages_from_files():
+    """
+    Try read JSON percentages from well-known files:
+      - output/category_percentages.json
+      - output/category_percentages.json (other variants)
+      - output/categories/*.json (construct if necessary)
+    Returns either a list of {"name", "percentage"} or a mapping name->percentage, or None
+    """
+    candidates = [
+        OUTPUT_DIR / "category_percentages.json",
+        OUTPUT_DIR / "category_percentages.json",
+        OUTPUT_DIR / "category_percentages.json",
+        BASE_DIR / "output" / "category_percentages.json",
+        BASE_DIR / "backend" / "characterRecognition" / "output" / "category_percentages.json",
+        BASE_DIR / "backend" / "characterRecognition" / "output" / "category_percentages.json",
+    ]
+    for p in candidates:
+        try:
+            if p and p.exists():
+                with open(p, "r", encoding="utf-8") as fh:
+                    data = json.load(fh)
+                return data
+        except Exception:
+            continue
+    return None
+
+
+def _store_percentages_for_job(jobid: str, percentages):
+    """
+    percentages may be:
+      - dict: name -> numeric
+      - list of {name, percentage}
+    This function stores the payload in LATEST_PERCENTAGES and PERCENTAGES_BY_JOB.
+    """
+    global LATEST_PERCENTAGES, PERCENTAGES_BY_JOB
+    now = time()
+    rec = {"jobId": jobid, "percentages": percentages, "received_at": now}
+    with PERCENTAGES_LOCK:
+        LATEST_PERCENTAGES = rec
+        PERCENTAGES_BY_JOB[jobid] = rec
+
+
 # Start processing job in background
 def _start_processing_job(jobid):
     """
     This function runs in a background thread and updates the job record.
     It pushes messages to the SSE queue for the job, and updates status/result.
+    After the pipeline completes, it tries to compute/find category percentages and store them.
     """
     q = _jobs[jobid]["queue"]
     try:
@@ -156,16 +285,109 @@ def _start_processing_job(jobid):
         # Run pipeline (synchronously). If this raises, will go to except block.
         combined = run_json_text()
 
-        # Save summary + file paths
+        # Save summary + file paths (attempt to save outputs if run_json_text wrote them)
         summary = combined.get("summary", {}) if isinstance(combined, dict) else {}
         combined_path = str(OUTPUT_DIR / "all_transactions.json")
         per_file_path = str(OUTPUT_DIR / "per_file_results.json")
 
+        # Mark job completed for primary pipeline
         _jobs[jobid]["status"] = "completed"
         _jobs[jobid]["finished_at"] = time()
         _jobs[jobid]["result"] = {"summary": summary, "combined": combined_path, "per_file": per_file_path}
 
         q.put({"event": "completed", "result": _jobs[jobid]["result"]})
+
+        # --- NEW: try to compute/find percentages and store them for frontend ---
+        percentages_payload = None
+
+        # 1) If a find_percentages function is available, try to call it.
+        if find_percentages is not None:
+            try:
+                # try calling with no args (some implementations export a convenience function)
+                try:
+                    res = find_percentages()
+                except TypeError:
+                    # try calling with helpful defaults (paths similar to the CLI defaults used in your module)
+                    candidate_paths = [
+                        str(OUTPUT_DIR / "all_transactions.json"),
+                        str(BASE_DIR / "backend" / "characterRecognition" / "output" / "all_transactions.json"),
+                        str(BASE_DIR / "output" / "all_transactions.json"),
+                    ]
+                    categories_dir = str(OUTPUT_DIR / "categories")
+                    out_path = str(OUTPUT_DIR / "category_percentages.json")
+                    res = find_percentages(candidate_paths, categories_dir, out_path)
+                # if res looks like a list/dict - accept it
+                if isinstance(res, (list, dict)):
+                    percentages_payload = res
+            except Exception as exc:
+                # ignore but log to queue
+                tb = traceback.format_exc()
+                q.put({"event": "warning", "message": f"find_percentages() call failed: {exc}", "traceback": tb})
+
+        # 2) If still None, try reading common output JSON files
+        if percentages_payload is None:
+            try:
+                loaded = _try_load_percentages_from_files()
+                if loaded is not None:
+                    percentages_payload = loaded
+            except Exception:
+                pass
+
+        # 3) If still None -> fallback attempt from combined all_transactions.json (very coarse)
+        if percentages_payload is None:
+            try:
+                # try to read OUTPUT_DIR / per-category files under OUTPUT_DIR / categories
+                cat_dir = OUTPUT_DIR / "categories"
+                if cat_dir.exists() and cat_dir.is_dir():
+                    # try to read each json file and compute simple money_in sum -> percentages
+                    cat_files = sorted([p for p in cat_dir.glob("*.json")])
+                    # naive sum
+                    sums = {}
+                    total = 0.0
+                    for cf in cat_files:
+                        try:
+                            with open(cf, "r", encoding="utf-8") as fh:
+                                obj = json.load(fh)
+                            # try a few fields
+                            amount = None
+                            if isinstance(obj, dict):
+                                if "summary" in obj and isinstance(obj["summary"], dict) and "money_in" in obj["summary"]:
+                                    amount = obj["summary"]["money_in"]
+                                elif "money_in" in obj:
+                                    amount = obj["money_in"]
+                            if amount is None:
+                                # skip
+                                amount = 0
+                            try:
+                                num = float(amount)
+                            except Exception:
+                                num = 0.0
+                            name = obj.get("category") if isinstance(obj, dict) else cf.stem
+                            name = name or cf.stem
+                            sums[name] = sums.get(name, 0.0) + num
+                            total += num
+                        except Exception:
+                            continue
+                    if total > 0 and sums:
+                        # build percentages list
+                        payload_list = []
+                        for k, v in sums.items():
+                            payload_list.append({"name": k, "percentage": int(round((v / total) * 100))})
+                        percentages_payload = payload_list
+                else:
+                    # try reading combined all_transactions.json and produce an "everything else" placeholder
+                    at = OUTPUT_DIR / "all_transactions.json"
+                    if at.exists():
+                        # as a last resort, return empty/zero percentages
+                        percentages_payload = []
+            except Exception:
+                percentages_payload = None
+
+        # If we did find percentages, store them so /api/spending/latest returns them
+        if percentages_payload is not None:
+            _store_percentages_for_job(jobid, percentages_payload)
+            q.put({"event": "percentages_stored", "message": "Category percentages were found and stored", "payload_summary": (percentages_payload if isinstance(percentages_payload, list) and len(percentages_payload) < 50 else "large")})
+
     except Exception as exc:
         tb = traceback.format_exc()
         _jobs[jobid]["status"] = "error"

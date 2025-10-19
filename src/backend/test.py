@@ -1,23 +1,49 @@
 from importlib.resources import contents
 from dotenv import load_dotenv
+# test.py
 import os
-from google import genai
+from dotenv import load_dotenv
 import sys
+import requests
+import json
+from time import sleep
+
+# your existing imports
+from importlib.resources import contents
+from google import genai
 
 from characterRecognition.text_to_json import run_json_text
 from characterRecognition.find_percentages import find_percentages
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-# The client gets the API key from the environment variable `GEMINI_API_KEY`.
-load_dotenv()  # loads GEMINI_API_KEY from .env
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# load GEMINI key if needed (you already had this)
+load_dotenv()
 
-full_json = run_json_text()
-
+# generate / load your data
+full_json = run_json_text()  # if this returns combined info you can use it
 percentages = find_percentages()
 
+# POST to backend
+API_URL = os.environ.get("BACKEND_URL", "http://localhost:3001")  # change if your backend runs elsewhere
+endpoint = f"{API_URL}/api/spending"
+
+payload = {
+    # optional jobId - include if you want to correlate with SSE jobId
+    # "jobId": "<optional-job-id>",
+    "percentages": percentages
+}
+
+try:
+    print("Posting percentages to backend:", endpoint)
+    r = requests.post(endpoint, json=payload, timeout=10)
+    r.raise_for_status()
+    print("Server response:", r.status_code, r.json())
+except Exception as e:
+    print("Failed to POST to backend:", str(e))
+
 print("I finished!")
+
 
 # goal_json = [
 #   {
