@@ -1,32 +1,385 @@
 import React, { useEffect, useRef } from 'react';
 import ApexCharts from 'apexcharts';
 
-// raw transaction data (same shape used by pie/column charts)
-const rawTransactionData = [
-  { date: "06012021", "company-name": "Best Embarcadero Parking", type: "travel", amount: "25.00" },
-  { date: "06012021", "company-name": "AIG Insurance Adjustment 20-21", type: "bills", amount: "121.45" },
-  { date: "06022021", "company-name": "Ferry Building Marketplace", type: "eating out", amount: "76.80" },
-  { date: "06022021", "company-name": "76 Fuel 1150 Embarcadero", type: "travel", amount: "87.25" },
-  { date: "06042021", "company-name": "Trello Subscription", type: "bills", amount: "35.20" },
-  { date: "06042021", "company-name": "ATM Embarcadero Center", type: "everything else", amount: "200.00" },
-  { date: "06072021", "company-name": "Blue Bottle Cofee", type:"eating out", amount: "11.00" },
-  { date: "06072021", "company-name": "Best Embarcadero Parking", type: "travel", amount: "35.00" },
-  { date: "06072021", "company-name": "Docmosis Subscription", type: "bills", amount: "50.00" },
-  { date: "06072021", "company-name": "Embarcadero Centre Postage", type: "everything else", amount: "22.50" },
-  { date: "06072021", "company-name": "Bill Payment - Silicon Valley Graphic", type: "bills", amount: "450.00" },
-  { date: "06072021", "company-name": "Blue Bottle Cofee", type: "eating out", amount: "11.00" },
-  { date: "06082021", "company-name": "Ferry Building Marketplace", type: "eating out", amount: "85.50" },
-  { date: "06082021", "company-name": "Canva Subscription", type: "bills", amount: "125.00" },
-  { date: "06092021", "company-name": "76 Fuel 1150 Embarcadero", type: "travel", amount: "95.00" },
-  { date: "06102021", "company-name": "Embarcadero Centre Postage", type: "everything else", amount: "24.50" },
-  { date: "06102021", "company-name": "ATM Embarcadero Center", type: "everything else", amount: "300.00" },
-  { date: "06112021", "company-name": "Best Embarcadero Parking", type: "travel", amount: "7.50" },
-  { date: "06112021", "company-name": "Bill Payment - Silicon Valley Graphic", type: "bills", amount: "4500.00" },
-  { date: "06142021", "company-name": "Ferry Building Marketplace", type: "eating out", amount: "150.65" },
-  { date: "06142021", "company-name": "Bill Payment - Electricity", type: "bills", amount: "900.65" },
-  { date: "06142021", "company-name": "Best Embarcadero Parking", type: "travel", amount: "121.00" },
-  { date: "06142021", "company-name": "Embarcadero Centre Postage", type: "everything else", amount: "54.75" }
-];
+// 1. The user's raw JSON data
+const inputData = {
+  "transactions": [
+    {
+      "date-processed": "01-01-2025",
+      "date-of-transaction": "",
+      "company-name": "Opening Balance",
+      "amount": "\u00a32,150.00",
+      "balance": "\u00a32,150.00",
+      "type": "opening_balance",
+      "company-type": "Opening Balance",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-01-2025",
+      "date-of-transaction": "",
+      "company-name": "Opening Balance",
+      "amount": "\u00a33,200.00",
+      "balance": "\u00a33,200.00",
+      "type": "opening_balance",
+      "company-type": "Opening Balance",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-02-2025",
+      "date-of-transaction": "01-02-2025",
+      "company-name": "Amazon UK - Electronics",
+      "amount": "\u00a3245.99",
+      "balance": "\u00a32,395.99",
+      "type": "deposit",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-03-2025",
+      "date-of-transaction": "01-03-2025",
+      "company-name": "John Lewis - Home Goods",
+      "amount": "\u00a3189.50",
+      "balance": "\u00a32,585.49",
+      "type": "deposit",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-03-2025",
+      "date-of-transaction": "01-03-2025",
+      "company-name": "Mortgage Payment (30 yr @ 4.4%)",
+      "amount": "\u00a31,402.13",
+      "balance": "\u00a31,797.87",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-04-2025",
+      "date-of-transaction": "01-04-2025",
+      "company-name": "Shell Petrol - Canary Wharf",
+      "amount": "\u00a345.00",
+      "balance": "\u00a32,630.49",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-04-2025",
+      "date-of-transaction": "01-04-2025",
+      "company-name": "Sainsbury\u2019s Grocery",
+      "amount": "\u00a392.45",
+      "balance": "\u00a31,705.42",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-05-2025",
+      "date-of-transaction": "01-05-2025",
+      "company-name": "eBay - Vintage Clothing",
+      "amount": "\u00a367.25",
+      "balance": "\u00a32,697.74",
+      "type": "deposit",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-05-2025",
+      "date-of-transaction": "01-05-2025",
+      "company-name": "Starbucks",
+      "amount": "\u00a34.95",
+      "balance": "\u00a31,700.47",
+      "type": "withdrawal",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-06-2025",
+      "date-of-transaction": "01-06-2025",
+      "company-name": "Pret A Manger - Lunch",
+      "amount": "\u00a38.75",
+      "balance": "\u00a32,706.49",
+      "type": "deposit",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-06-2025",
+      "date-of-transaction": "01-06-2025",
+      "company-name": "Shell Petrol",
+      "amount": "\u00a360.00",
+      "balance": "\u00a31,640.47",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-07-2025",
+      "date-of-transaction": "01-07-2025",
+      "company-name": "Salary (partial)",
+      "amount": "\u00a32,000.00",
+      "balance": "\u00a33,640.47",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-08-2025",
+      "date-of-transaction": "01-08-2025",
+      "company-name": "ASOS - Clothing",
+      "amount": "\u00a3132.40",
+      "balance": "\u00a31,838.89",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-09-2025",
+      "date-of-transaction": "01-09-2025",
+      "company-name": "Uber Eats - Food Delivery",
+      "amount": "\u00a334.50",
+      "balance": "\u00a31,873.39",
+      "type": "deposit",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-09-2025",
+      "date-of-transaction": "01-09-2025",
+      "company-name": "Utility - Electricity Direct Debit",
+      "amount": "\u00a385.60",
+      "balance": "\u00a33,554.87",
+      "type": "withdrawal",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-10-2025",
+      "date-of-transaction": "01-10-2025",
+      "company-name": "Apple Store - App Purchase",
+      "amount": "\u00a32.99",
+      "balance": "\u00a31,876.38",
+      "type": "deposit",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-10-2025",
+      "date-of-transaction": "01-10-2025",
+      "company-name": "Gym Membership",
+      "amount": "\u00a335.00",
+      "balance": "\u00a33,519.87",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-11-2025",
+      "date-of-transaction": "01-11-2025",
+      "company-name": "British Airways - Flight Booking",
+      "amount": "\u00a3650.00",
+      "balance": "\u00a32,526.38",
+      "type": "deposit",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-12-2025",
+      "date-of-transaction": "01-12-2025",
+      "company-name": "Waitrose - Grocery",
+      "amount": "\u00a378.90",
+      "balance": "\u00a32,605.28",
+      "type": "deposit",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-12-2025",
+      "date-of-transaction": "01-12-2025",
+      "company-name": "Tesco Grocery",
+      "amount": "\u00a368.90",
+      "balance": "\u00a33,450.97",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-13-2025",
+      "date-of-transaction": "01-13-2025",
+      "company-name": "Car Payment - BMW Finance",
+      "amount": "\u00a3486.22",
+      "balance": "\u00a33,091.50",
+      "type": "deposit",
+      "company-type": "Recurring Debts",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-14-2025",
+      "date-of-transaction": "01-14-2025",
+      "company-name": "Hotel Booking - Premier Inn",
+      "amount": "\u00a3120.00",
+      "balance": "\u00a33,211.50",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-14-2025",
+      "date-of-transaction": "01-14-2025",
+      "company-name": "Waitrose Grocery",
+      "amount": "\u00a354.20",
+      "balance": "\u00a33,396.77",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-15-2025",
+      "date-of-transaction": "01-15-2025",
+      "company-name": "Netflix Subscription",
+      "amount": "\u00a310.99",
+      "balance": "\u00a33,222.49",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "01-15-2025",
+      "date-of-transaction": "01-15-2025",
+      "company-name": "Netflix",
+      "amount": "\u00a39.99",
+      "balance": "\u00a33,386.78",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-16-2025",
+      "date-of-transaction": "01-16-2025",
+      "company-name": "Home Insurance (annual pro rata)",
+      "amount": "\u00a345.00",
+      "balance": "\u00a33,341.78",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-18-2025",
+      "date-of-transaction": "01-18-2025",
+      "company-name": "Coffee with friend",
+      "amount": "\u00a37.20",
+      "balance": "\u00a33,334.58",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-20-2025",
+      "date-of-transaction": "01-20-2025",
+      "company-name": "Primark - clothing",
+      "amount": "\u00a368.00",
+      "balance": "\u00a33,266.58",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-22-2025",
+      "date-of-transaction": "01-22-2025",
+      "company-name": "Phone Bill Direct Debit",
+      "amount": "\u00a328.50",
+      "balance": "\u00a33,238.08",
+      "type": "withdrawal",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-25-2025",
+      "date-of-transaction": "01-25-2025",
+      "company-name": "Dining - Restaurant",
+      "amount": "\u00a362.75",
+      "balance": "\u00a33,175.33",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-30-2025",
+      "date-of-transaction": "01-30-2025",
+      "company-name": "Salary (net)",
+      "amount": "\u00a33,800.00",
+      "balance": "\u00a36,975.33",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-31-2025",
+      "date-of-transaction": "01-31-2025",
+      "company-name": "Council Tax",
+      "amount": "\u00a3150.00",
+      "balance": "\u00a36,825.33",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-31-2025",
+      "date-of-transaction": "01-31-2025",
+      "company-name": "Sainsbury\u2019s Grocery",
+      "amount": "\u00a374.25",
+      "balance": "\u00a36,751.08",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    }
+  ],
+  "summary": {
+    "money_in": 7740.09,
+    "money_out": 3116.52
+  }
+};
+
+/**
+ * 2. Helper function to transform the input data into the format
+ * the line chart component expects.
+ */
+const transformData = (transactions) => {
+  // Filter for spending transactions only
+  const spending = transactions.filter(tx => {
+    // 'withdrawal' is spending
+    if (tx.type === 'withdrawal') return true;
+    // 'deposit' on a 'credit' card is also spending
+    if (tx.type === 'deposit' && tx['card-type'] === 'credit') return true;
+    // 'opening_balance' and 'deposit' on 'debit' (salary) are not spending
+    return false;
+  });
+
+  // Map to the required { date, "company-name", type, amount } format
+  return spending.map(tx => {
+    // Clean amount: remove '£' and ','
+    const cleanedAmount = tx.amount.replace(/\u00a3/g, '').replace(/,/g, '');
+    
+    // Format date: "DD-MM-YYYY" -> "MMDDYYYY"
+    const parts = tx['date-processed'].split('-');
+    let formattedDate = '';
+    if (parts.length === 3) {
+      const [dd, mm, yyyy] = parts;
+      formattedDate = `${mm}${dd}${yyyy}`;
+    }
+
+    return {
+      date: formattedDate,
+      "company-name": tx['company-name'],
+      type: tx['company-type'], // Use 'company-type' as the category
+      amount: cleanedAmount
+    };
+  });
+};
+
+// 3. Call the transformation to get the data for the chart
+const rawTransactionData = transformData(inputData.transactions);
 
 // aggregate transactions by date and return sorted labels + series
 const processLineChartData = (data) => {
@@ -54,13 +407,13 @@ const processLineChartData = (data) => {
     return da - db;
   });
 
-  // labels like "06/01" and series numbers
+  // labels like "01/02" (MM/DD) and series numbers
   const labels = entries.map(([iso]) => {
     const d = new Date(iso);
     if (!isNaN(d.getTime())) {
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const dd = String(d.getDate()).padStart(2, '0');
-      return `${mm}/${dd}`;
+      return `${dd}/${mm}`; // Changed to DD/MM for UK format
     }
     return iso;
   });
@@ -91,14 +444,20 @@ function SpendingLineChart({ seriesData, categories, chartType = 'Line' } = {}) 
         toolbar: { show: false },
       },
       colors: ['#1A56DB'],
-      tooltip: { enabled: true, x: { show: false } },
+      tooltip: { 
+        enabled: true, 
+        x: { show: false },
+        y: {
+          formatter: (v) => '£' + Number(v).toFixed(2) // Tooltip currency
+        }
+      },
       dataLabels: { enabled: false },
       stroke: { width: 6, curve: 'smooth' },
       grid: { show: true, strokeDashArray: 4, padding: { left: 2, right: 2, top: -26 } },
       series: [{ name: 'Amount Spent', data: computed.series }],
       legend: { show: false },
       xaxis: { categories: computed.labels, labels: { style: { fontFamily: 'Inter, sans-serif' } }, axisBorder: { show: false }, axisTicks: { show: false } },
-      yaxis: { labels: { formatter: (v) => '$' + Number(v).toFixed(0), style: { fontFamily: 'Inter, sans-serif' } } },
+      yaxis: { labels: { formatter: (v) => '£' + Number(v).toFixed(0), style: { fontFamily: 'Inter, sans-serif' } } }, // Y-axis currency
       responsive: [{ breakpoint: 480, options: { chart: { height: 260 }, stroke: { width: 3 } } }]
     };
 
