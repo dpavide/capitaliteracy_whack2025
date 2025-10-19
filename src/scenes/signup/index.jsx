@@ -324,7 +324,7 @@ const SignUp = () => {
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2" color={colors.gray[300]}>
               Already have an account?{' '}
-              <Link component="button" type="button" onClick={() => navigate('/login')} sx={{ color: colors.blueAccent[500], textDecoration: 'none', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>
+              <Link component="button" type="button" onClick={() => navigate('/')} sx={{ color: colors.blueAccent[500], textDecoration: 'none', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>
                 Sign In
               </Link>
             </Typography>
