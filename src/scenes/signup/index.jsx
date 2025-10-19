@@ -13,16 +13,18 @@ import {
   Select,
   FormHelperText,
   Alert,
+  Slider,
+  InputAdornment,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { tokens } from '../../theme';
 import { supabase } from '../../lib/supabaseClient';
 
 const USERS_TABLE = 'users';
-// IMPORTANT: set this to your exact column name in DB
+const PROFILES_TABLE = 'profiles'; // Define the profiles table name
 const NUMERICAL_LITERACY_COLUMN = 'numerical_literacy_level';
 
-// Compute age in full years from a YYYY-MM-DD date string
+// Helper function to calculate age from a date string (YYYY-MM-DD)
 function calculateAge(dobStr) {
   if (!dobStr) return NaN;
   const dob = new Date(dobStr);
@@ -44,9 +46,16 @@ const SignUp = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    dob: '', // replaced age with dob
+    dob: '',
     creditScore: '',
     numericalLiteracy: '',
+    annual_income: '',
+    primary_goal: '',
+    primary_goal_other: '',
+    is_first_time_buyer: null,
+    target_home_price: 250000,
+    down_payment: 25000,
+    buying_timeline: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -54,80 +63,52 @@ const SignUp = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
+  };
+
+  const handleSliderChange = (name) => (event, newValue) => {
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-
-    // Full Name validation
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = '"Full Name" is required';
-    } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = 'Full name must be at least 2 characters';
-    }
-
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = '"Email" is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = '"Password" is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    // Confirm Password validation
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = '"Confirm Password" is required';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    // DOB validation (must produce age between 13–120)
     const ageFromDob = calculateAge(formData.dob);
-    if (!formData.dob) {
-      newErrors.dob = '"Date of Birth" is required';
-    } else if (Number.isNaN(ageFromDob)) {
-      newErrors.dob = 'Please enter a valid date of birth';
-    } else if (ageFromDob < 13 || ageFromDob > 120) {
-      newErrors.dob = 'Age must be between 13 and 120';
-      if (ageFromDob < 13) {
-        newErrors.dobUnderage = 'you are not old enough to use this app';
+
+    if (!formData.fullName.trim()) newErrors.fullName = 'Full Name is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
+    if (!formData.password) newErrors.password = 'Password is required';
+    else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+    if (!formData.dob) newErrors.dob = 'Date of Birth is required';
+    else if (ageFromDob < 13) newErrors.dobUnderage = 'You must be at least 13 years old to sign up.';
+    if (!formData.numericalLiteracy) newErrors.numericalLiteracy = 'Numerical Literacy is required';
+
+    if (ageFromDob >= 18) {
+      if (formData.creditScore === '') newErrors.creditScore = 'Credit Score is required';
+      else if (parseInt(formData.creditScore, 10) < 300 || parseInt(formData.creditScore, 10) > 850) {
+        newErrors.creditScore = 'Credit score must be between 300 and 850';
       }
     }
 
-    // Credit Score validation (only if age >= 18 and field is shown)
-    if (!Number.isNaN(ageFromDob) && ageFromDob >= 18) {
-      if (formData.creditScore === '') {
-        newErrors.creditScore = '"Credit Score" is required';
-      } else {
-        const scoreNum = parseInt(formData.creditScore, 10);
-        if (isNaN(scoreNum) || scoreNum < 0 || scoreNum > 999) {
-          newErrors.creditScore = 'Credit score must be between 0 and 999';
-        }
-      }
+    if (!formData.annual_income) {
+      newErrors.annual_income = 'Annual Income is required';
+    } else if (isNaN(Number(formData.annual_income)) || Number(formData.annual_income) <= 0) {
+      newErrors.annual_income = 'Please enter a valid income amount';
     }
 
-    // Numerical Literacy validation (ensure matches DB constraint)
-    if (!formData.numericalLiteracy) {
-      newErrors.numericalLiteracy = '"Numerical Literacy" is required';
-    } else if (!['beginner', 'intermediate', 'advanced'].includes(formData.numericalLiteracy)) {
-      newErrors.numericalLiteracy = 'Numerical literacy must be beginner, intermediate, or advanced';
+    if (!formData.primary_goal) {
+      newErrors.primary_goal = 'Primary Goal is required';
+    } else if (formData.primary_goal === 'other' && !formData.primary_goal_other.trim()) {
+      newErrors.primary_goal_other = 'Please specify your goal';
+    }
+
+    if (formData.primary_goal === 'buy_home') {
+      if (formData.is_first_time_buyer === null) newErrors.is_first_time_buyer = 'This field is required';
+      if (!formData.buying_timeline) newErrors.buying_timeline = 'Buying Timeline is required';
     }
 
     setErrors(newErrors);
@@ -136,80 +117,78 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const ageFromDob = calculateAge(formData.dob);
-
-    // Under-13 hard block with banner message
-    if (!formData.dob || Number.isNaN(ageFromDob) || ageFromDob < 13) {
-      setErrors((prev) => ({
-        ...prev,
-        dob: !formData.dob
-          ? '"Date of Birth" is required'
-          : Number.isNaN(ageFromDob)
-          ? 'Please enter a valid date of birth'
-          : 'Age must be between 13 and 120',
-        dobUnderage: 'you are not old enough to use this app',
-      }));
-      return;
-    }
-
     if (!validateForm()) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
       const { email, password } = formData;
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+
       if (signUpError) {
         alert(signUpError.message);
         setLoading(false);
         return;
       }
 
-      const userId = signUpData?.user?.id || null;
-
-      const payload = {
-        id: userId,
-        email: formData.email,
-        full_name: formData.fullName,
-        age: ageFromDob,
-        [NUMERICAL_LITERACY_COLUMN]: formData.numericalLiteracy,
-        credit_score: ageFromDob >= 18 ? (formData.creditScore === '' ? null : Number(formData.creditScore)) : null,
-      };
-
-      const session = signUpData?.session ?? (await supabase.auth.getSession()).data.session;
-      if (!session) {
-        localStorage.setItem('pendingProfile', JSON.stringify(payload));
-        alert('Please verify your email, then sign in to finish creating your profile.');
-        setLoading(false);
+      const userId = signUpData?.user?.id;
+      if (!userId) {
+        alert('Sign-up succeeded but could not get user ID. Please verify your email and log in.');
         navigate('/login');
         return;
       }
 
-      const { data: upserted, error: upsertErr } = await supabase
-        .from(USERS_TABLE)
-        .upsert(payload, { onConflict: 'id' })
-        .select()
-        .single();
+      const ageFromDob = calculateAge(formData.dob);
 
-      if (upsertErr) {
-        const msg = String(upsertErr.message || '');
-        if ((upsertErr.status ?? 0) === 403 || msg.toLowerCase().includes('row-level security')) {
-          alert('Profile insert blocked by RLS. Add an INSERT policy on "users": WITH CHECK (auth.uid() = id)');
+      // Payload for the 'users' table (core user info)
+      const userPayload = {
+        id: userId,
+        full_name: formData.fullName,
+        email: formData.email,
+        age: ageFromDob,
+        credit_score: ageFromDob >= 18 ? Number(formData.creditScore) : null,
+        [NUMERICAL_LITERACY_COLUMN]: formData.numericalLiteracy,
+      };
+
+      // Payload for the 'profiles' table (questionnaire info)
+      const profilePayload = {
+        id: userId,
+        annual_income: Number(formData.annual_income),
+        primary_goal: formData.primary_goal === 'other' ? formData.primary_goal_other : formData.primary_goal,
+        is_first_time_buyer: formData.primary_goal === 'buy_home' ? formData.is_first_time_buyer : null,
+        target_home_price: formData.primary_goal === 'buy_home' ? formData.target_home_price : null,
+        down_payment: formData.primary_goal === 'buy_home' ? formData.down_payment : null,
+        buying_timeline: formData.primary_goal === 'buy_home' ? formData.buying_timeline : null,
+      };
+
+      // Perform both database operations concurrently
+      const [userResult, profileResult] = await Promise.all([
+        supabase.from(USERS_TABLE).upsert(userPayload),
+        supabase.from(PROFILES_TABLE).upsert(profilePayload)
+      ]);
+
+      // Check for errors from either operation, with specific RLS check
+      if (userResult.error || profileResult.error) {
+        const userError = userResult.error;
+        const profileError = profileResult.error;
+
+        // Check for the specific RLS error to provide a helpful message
+        if (userError?.message.includes('violates row-level security') || profileError?.message.includes('violates row-level security')) {
+            alert("Database Security Error: Your profile could not be saved. This usually happens if email confirmation is enabled in your project. Please disable it in your Supabase Auth settings for a one-step signup, or verify your email and then log in.");
         } else {
-          alert(msg);
+            const userErrorMessage = userError ? `Users table error: ${userError.message}` : '';
+            const profileErrorMessage = profileError ? `Profiles table error: ${profileError.message}` : '';
+            alert(`Error saving profile data.\n${userErrorMessage}\n${profileErrorMessage}`);
         }
+        
         setLoading(false);
         return;
       }
 
-      if (!upserted?.id) {
-        console.warn('Upsert returned no row. Check RLS or schema.');
-      }
-
       alert('Sign up successful!');
-      navigate('/login');
+      navigate('/main_page'); // Redirect to the main page
     } catch (err) {
       console.error(err);
-      alert('Unexpected error. Please try again.');
+      alert('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -220,262 +199,128 @@ const SignUp = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: colors.primary[400],
-        padding: 3,
+        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: colors.primary[400], padding: 3,
       }}
     >
       <Paper
         elevation={3}
         sx={{
-          padding: 4,
-          maxWidth: 500,
-          width: '100%',
-          backgroundColor: colors.primary[400],
-          borderRadius: 2,
+          padding: 4, maxWidth: 500, width: '100%',
+          backgroundColor: colors.primary[400], borderRadius: 2,
         }}
       >
-        <Typography
-          variant="h3"
-          component="h1"
-          gutterBottom
-          sx={{
-            fontWeight: 700,
-            textAlign: 'center',
-            color: colors.gray[100],
-            marginBottom: 2,
-          }}
-        >
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, textAlign: 'center', color: colors.gray[100], mb: 2 }}>
           Create Account
         </Typography>
-
-        <Typography
-          variant="body1"
-          sx={{
-            textAlign: 'center',
-            color: colors.gray[300],
-            marginBottom: 3,
-          }}
-        >
+        <Typography variant="body1" sx={{ textAlign: 'center', color: colors.gray[300], mb: 3 }}>
           Sign up to get started
         </Typography>
 
-        <form onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            label="Full Name"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            error={!!errors.fullName}
-            helperText={errors.fullName}
-            margin="normal"
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: colors.primary[200],
-                },
-                '&:hover fieldset': {
-                  borderColor: colors.blueAccent[500],
-                },
-              },
-            }}
-          />
-
-          <TextField
-            fullWidth
-            label="Email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={!!errors.email}
-            helperText={errors.email}
-            margin="normal"
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: colors.primary[200],
-                },
-                '&:hover fieldset': {
-                  borderColor: colors.blueAccent[500],
-                },
-              },
-            }}
-          />
-
-          <TextField
-            fullWidth
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={!!errors.password}
-            helperText={errors.password}
-            margin="normal"
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: colors.primary[200],
-                },
-                '&:hover fieldset': {
-                  borderColor: colors.blueAccent[500],
-                },
-              },
-            }}
-          />
-
-          <TextField
-            fullWidth
-            label="Confirm Password"
-            name="confirmPassword"
-            type="password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword}
-            margin="normal"
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: colors.primary[200],
-                },
-                '&:hover fieldset': {
-                  borderColor: colors.blueAccent[500],
-                },
-              },
-            }}
-          />
-
-          {/* Underage banner directly above DOB field */}
-          {errors.dobUnderage && (
-            <Alert severity="error" sx={{ mb: 1 }}>
-              {errors.dobUnderage}
-            </Alert>
-          )}
-
-          <Box sx={{ display: 'flex', gap: 2, marginTop: 2 }}>
-            {/* Replace numeric Age with DOB date field */}
-            <TextField
-              fullWidth
-              label="Date of Birth"
-              name="dob"
-              type="date"
-              value={formData.dob}
-              onChange={handleChange}
-              error={!!errors.dob}
-              helperText={errors.dob}
-              InputLabelProps={{ shrink: true }}
-              variant="outlined"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: colors.primary[200] },
-                  '&:hover fieldset': { borderColor: colors.blueAccent[500] },
-                },
-              }}
-            />
-
-            {Number.isFinite(ageNum) && ageNum >= 18 && (
-              <TextField
-                fullWidth
-                label="Credit Score"
-                name="creditScore"
-                type="number"
-                value={formData.creditScore}
-                onChange={handleChange}
-                error={!!errors.creditScore}
-                helperText={errors.creditScore}
-                inputProps={{ min: 0, max: 999 }}
-                variant="outlined"
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': { borderColor: colors.primary[200] },
-                    '&:hover fieldset': { borderColor: colors.blueAccent[500] },
-                  },
-                }}
-              />
+        <form onSubmit={handleSubmit} noValidate>
+          {/* --- Basic Info Fields --- */}
+          <TextField fullWidth label="Full Name" name="fullName" value={formData.fullName} onChange={handleChange} error={!!errors.fullName} helperText={errors.fullName} margin="normal" />
+          <TextField fullWidth label="Email" name="email" type="email" value={formData.email} onChange={handleChange} error={!!errors.email} helperText={errors.email} margin="normal" />
+          <TextField fullWidth label="Password" name="password" type="password" value={formData.password} onChange={handleChange} error={!!errors.password} helperText={errors.password} margin="normal" />
+          <TextField fullWidth label="Confirm Password" name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} error={!!errors.confirmPassword} helperText={errors.confirmPassword} margin="normal" />
+          {errors.dobUnderage && <Alert severity="error" sx={{ mb: 1 }}>{errors.dobUnderage}</Alert>}
+          <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+            <TextField fullWidth label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} error={!!errors.dob} helperText={errors.dob} InputLabelProps={{ shrink: true }} />
+            {ageNum >= 18 && (
+              <TextField fullWidth label="Credit Score (300-850)" name="creditScore" type="number" value={formData.creditScore} onChange={handleChange} error={!!errors.creditScore} helperText={errors.creditScore} />
             )}
           </Box>
-
-          <FormControl
-            fullWidth
-            margin="normal"
-            error={!!errors.numericalLiteracy}
-            sx={{ marginTop: 2 }}
-          >
-            <InputLabel id="numerical-literacy-label">
-              Numerical Literacy
-            </InputLabel>
-            <Select
-              labelId="numerical-literacy-label"
-              id="numerical-literacy"
-              name="numericalLiteracy"
-              value={formData.numericalLiteracy}
-              onChange={handleChange}
-              label="Numerical Literacy"
-              sx={{
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: colors.primary[200],
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: colors.blueAccent[500],
-                },
-              }}
-            >
+          <FormControl fullWidth margin="normal" error={!!errors.numericalLiteracy}>
+            <InputLabel>Numerical Literacy</InputLabel>
+            <Select name="numericalLiteracy" value={formData.numericalLiteracy} label="Numerical Literacy" onChange={handleChange}>
               <MenuItem value="beginner">Beginner</MenuItem>
               <MenuItem value="intermediate">Intermediate</MenuItem>
               <MenuItem value="advanced">Advanced</MenuItem>
             </Select>
-            {errors.numericalLiteracy && (
-              <FormHelperText>{errors.numericalLiteracy}</FormHelperText>
-            )}
+            <FormHelperText>{errors.numericalLiteracy}</FormHelperText>
           </FormControl>
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            disabled={loading}
-            sx={{
-              marginTop: 3,
-              marginBottom: 2,
-              backgroundColor: colors.greenAccent[600],
-              color: colors.gray[100],
-              fontSize: 16,
-              fontWeight: 600,
-              padding: '12px',
-              '&:hover': {
-                backgroundColor: colors.greenAccent[700],
-              },
-            }}
-          >
-            {loading ? 'Signing Up...' : 'Sign Up'}
-          </Button>
+          {/* --- Questionnaire Section --- */}
+          <Typography variant="h5" sx={{ mt: 4, mb: 1, color: colors.gray[100], borderTop: `1px solid ${colors.primary[300]}`, pt: 2 }}>
+            Tell Us About Your Goals
+          </Typography>
+          <FormControl fullWidth margin="normal" error={!!errors.primary_goal}>
+            <InputLabel>Primary Goal</InputLabel>
+            <Select name="primary_goal" value={formData.primary_goal} label="Primary Goal" onChange={handleChange}>
+              <MenuItem value="buy_home">Buy a home</MenuItem>
+              <MenuItem value="buy_car">Buy a car</MenuItem>
+              <MenuItem value="refinance">Refinance a loan</MenuItem>
+              <MenuItem value="build_credit">Build my credit</MenuItem>
+              <MenuItem value="monitor">Monitor my financial health</MenuItem>
+              <MenuItem value="other">Other (Please specify)</MenuItem>
+            </Select>
+            <FormHelperText>{errors.primary_goal}</FormHelperText>
+          </FormControl>
 
-          <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+          {formData.primary_goal === 'other' && (
+            <TextField
+              fullWidth
+              label="Your Primary Goal"
+              name="primary_goal_other"
+              value={formData.primary_goal_other}
+              onChange={handleChange}
+              error={!!errors.primary_goal_other}
+              helperText={errors.primary_goal_other}
+              margin="normal"
+            />
+          )}
+
+          <TextField
+            fullWidth
+            label="Annual Household Income"
+            name="annual_income"
+            type="number"
+            value={formData.annual_income}
+            onChange={handleChange}
+            error={!!errors.annual_income}
+            helperText={errors.annual_income}
+            margin="normal"
+            InputProps={{
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            }}
+          />
+
+          {/* Conditional Fields for Home Buyers */}
+          {formData.primary_goal === 'buy_home' && (
+            <Box sx={{ mt: 2, p: 2, border: `1px solid ${colors.primary[300]}`, borderRadius: 1 }}>
+              <Typography variant="h6" sx={{ mb: 2, color: colors.gray[200] }}>Home Buyer Details</Typography>
+              <FormControl fullWidth margin="normal" error={!!errors.is_first_time_buyer}>
+                <InputLabel>Are you a first-time home buyer?</InputLabel>
+                <Select name="is_first_time_buyer" value={formData.is_first_time_buyer} label="Are you a first-time home buyer?" onChange={handleChange}>
+                  <MenuItem value={true}>Yes</MenuItem>
+                  <MenuItem value={false}>No</MenuItem>
+                </Select>
+                <FormHelperText>{errors.is_first_time_buyer}</FormHelperText>
+              </FormControl>
+              <FormControl fullWidth margin="normal" error={!!errors.buying_timeline}>
+                <InputLabel>Buying Timeline</InputLabel>
+                <Select name="buying_timeline" value={formData.buying_timeline} label="Buying Timeline" onChange={handleChange}>
+                  <MenuItem value="<6m">Within 6 months</MenuItem>
+                  <MenuItem value="6-12m">6 - 12 months</MenuItem>
+                  <MenuItem value="1-2y">1 - 2 years</MenuItem>
+                  <MenuItem value="2y+">More than 2 years</MenuItem>
+                </Select>
+                <FormHelperText>{errors.buying_timeline}</FormHelperText>
+              </FormControl>
+              <Typography gutterBottom sx={{ mt: 2 }}>Target Home Price: ${formData.target_home_price.toLocaleString()}</Typography>
+              <Slider value={formData.target_home_price} onChange={handleSliderChange('target_home_price')} valueLabelDisplay="auto" step={10000} min={50000} max={1500000} />
+              <Typography gutterBottom sx={{ mt: 2 }}>Down Payment: ${formData.down_payment.toLocaleString()}</Typography>
+              <Slider value={formData.down_payment} onChange={handleSliderChange('down_payment')} valueLabelDisplay="auto" step={1000} min={0} max={200000} />
+            </Box>
+          )}
+
+          <Button type="submit" fullWidth variant="contained" disabled={loading} sx={{ mt: 3, mb: 2, backgroundColor: colors.greenAccent[600], color: colors.gray[100], fontSize: 16, fontWeight: 600, padding: '12px', '&:hover': { backgroundColor: colors.greenAccent[700] } }}>
+            {loading ? 'Creating Account...' : 'Sign Up'}
+          </Button>
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2" color={colors.gray[300]}>
               Already have an account?{' '}
-              <Link
-                component="button"
-                type="button"
-                onClick={() => navigate('/login')}
-                sx={{
-                  color: colors.blueAccent[500],
-                  textDecoration: 'none',
-                  fontWeight: 600,
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                }}
-              >
+              <Link component="button" type="button" onClick={() => navigate('/login')} sx={{ color: colors.blueAccent[500], textDecoration: 'none', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>
                 Sign In
               </Link>
             </Typography>
@@ -487,3 +332,4 @@ const SignUp = () => {
 };
 
 export default SignUp;
+
