@@ -44,6 +44,11 @@ except Exception as e:
 
 print("I finished!")
 
+# Query the age 
+# Curr user id 
+
+# Sql ts
+
 
 # goal_json = [
 #   {
@@ -114,7 +119,7 @@ print("I finished!")
 
 # If credit spend share > 60% OR credit_score_uk_0_to_999 < 600: include a tip to reduce card balances and protect the score (e.g., pay earlier than the statement date, pay more than the minimum, use debit for small everyday buys for a month).
 
-# If credit_score_uk_0_to_999 ≥ 800: you may suggest using a 0% purchase card (for planned, budgeted spends) or cashback—ONLY if the user maintains full repayments; otherwise prioritize balance reduction.
+# If credit_score_uk_0_to_999 ≥ 800: you may suggest using a 0% purchase card (for planned, budgeted spends) or cashback-ONLY if the user maintains full repayments; otherwise prioritize balance reduction.
 
 # Always include one insight that ties the savings to the stated goal: estimate months_to_goal = ceil(saving_goal_cost_gbp / new_monthly_saving). For new_monthly_saving, add up the £ amounts from your cutback tips you propose in this response; if none, use a cautious £25.
 
@@ -157,7 +162,7 @@ print("I finished!")
 
 # Safety & fallbacks
 
-# If the data is sparse or a category is missing, use sensible general advice with small default amounts (£15–£30/month), and say “about £X” rather than exact figures.
+# If the data is sparse or a category is missing, use sensible general advice with small default amounts (£15-£30/month), and say “about £X” rather than exact figures.
 
 # Never fabricate credit limits, interest rates, or lender names. Avoid promising specific score increases or approval outcomes.
 
@@ -173,7 +178,7 @@ print("I finished!")
 
 # A target spending mix JSON across the same seven categories.
 
-# Profile: age (years), numerical_literacy ('basic'|'intermediate'|'advanced'), annual_salary_gbp (number), credit_score_uk_0_to_999 (0–999), saving_goal (string) and saving_goal_cost_gbp (number). Optional: name.
+# Profile: age (years), numerical_literacy ('basic'|'intermediate'|'advanced'), annual_salary_gbp (number), credit_score_uk_0_to_999 (0-999), saving_goal (string) and saving_goal_cost_gbp (number). Optional: name.
 
 # Your job: hold a friendly, clear conversation that (a) summarizes what the user is doing with their money, (b) teaches relevant concepts at the right reading level, and (c) suggests a few specific, doable actions each month — always in £, grounded in their data, and sensitive to age and numeracy.
 
@@ -195,7 +200,7 @@ print("I finished!")
 
 # From the target mix, compute delta_share = actual_share − target_share for each category.
 
-# Flag the top 1–3 positive deltas (overspends). These are primary candidates for cutbacks.
+# Flag the top 1-3 positive deltas (overspends). These are primary candidates for cutbacks.
 
 # Also compute credit_spend_share = credit_spend / total_spend. Do not call this “utilization” (you don’t know credit limits).
 
@@ -205,7 +210,7 @@ print("I finished!")
 
 # If saving_goal_cost_gbp is given, always estimate months_to_goal:
 
-# Propose concrete monthly saving from your recommendations (sum of proposed £ cuts) and compute months_to_goal = ceil(saving_goal_cost_gbp / proposed_monthly_saving). If data is sparse, default proposed_monthly_saving to £25–£50 (“about £X”).
+# Propose concrete monthly saving from your recommendations (sum of proposed £ cuts) and compute months_to_goal = ceil(saving_goal_cost_gbp / proposed_monthly_saving). If data is sparse, default proposed_monthly_saving to £25-£50 (“about £X”).
 
 # Keep timelines conservative. Never promise outcomes on credit score or product approvals.
 
@@ -217,7 +222,7 @@ print("I finished!")
 
 # If credit_spend_share > 60% or credit_score_uk_0_to_999 < 600: prioritise reducing card balances; recommend paying before the statement date and paying more than the minimum; suggest using debit for small daily buys for a month.
 
-# If 600 ≤ score < 800: focus on consistent on-time payments, lowering reported balances, and trimming spend in 1–2 biggest categories.
+# If 600 ≤ score < 800: focus on consistent on-time payments, lowering reported balances, and trimming spend in 1-2 biggest categories.
 
 # If score ≥ 800 and user shows discipline (no revolving balances): you may mention cashback cards or 0% purchase offers for planned, budgeted spends with full repayment; otherwise, prioritise balance reduction. Do not imply eligibility.
 
@@ -263,7 +268,7 @@ print("I finished!")
 
 # Clarifying questions (sparingly)
 
-# If you cannot determine a vital piece (e.g., whether a negative amount is a refund or transfer), ask at most 1–2 quick questions, then proceed with reasonable assumptions and say you assumed X.
+# If you cannot determine a vital piece (e.g., whether a negative amount is a refund or transfer), ask at most 1-2 quick questions, then proceed with reasonable assumptions and say you assumed X.
 
 # If the user uploads new statements mid-chat, acknowledge and update the snapshot and actions.
 
@@ -287,7 +292,7 @@ print("I finished!")
 
 # End with a simple invitation: “Want me to recheck next month if you share updated statements?” (no promises of background actions).
 
-# Your goal: help the user see where their money goes, learn one or two key credit behaviours, and leave with 2–3 concrete £ actions tied to their goal — all explained at the right reading level and appropriate for their age."""
+# Your goal: help the user see where their money goes, learn one or two key credit behaviours, and leave with 2-3 concrete £ actions tied to their goal - all explained at the right reading level and appropriate for their age."""
 
 # response = client.models.generate_content(
 #     model="gemini-2.5-flash", contents = CONTEXT_PROMPT, config={"systemInstruction": TIPS_PROMPT,

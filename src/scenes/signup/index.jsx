@@ -189,7 +189,7 @@ const SignUp = () => {
       }
 
       alert('Sign up successful!');
-      navigate('/main_page'); // Redirect to the main page
+      navigate('/'); // Redirect to the login page
     } catch (err) {
       console.error(err);
       alert('An unexpected error occurred. Please try again.');
@@ -336,4 +336,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
