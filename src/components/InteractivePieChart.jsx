@@ -10,7 +10,7 @@ const InteractivePieChart = () => {
   const [dragging, setDragging] = useState(null);
 
   const categoryColors = {
-    'Groceries': colors.greenAccent[600],
+    'Recurring Debts': colors.greenAccent[600],
     'Travel': colors.blueAccent[600],
     'Entertainment': '#e91e63',
     'Shopping': '#ff9800',
@@ -21,7 +21,7 @@ const InteractivePieChart = () => {
 
   // Default state
   const defaultSegments = [
-    { name: 'Groceries', percentage: 20 },
+    { name: 'Recurring Debts', percentage: 20 },
     { name: 'Travel', percentage: 15 },
     { name: 'Entertainment', percentage: 10 },
     { name: 'Shopping', percentage: 15 },
