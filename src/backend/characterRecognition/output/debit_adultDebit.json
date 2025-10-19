@@ -1,0 +1,178 @@
+{
+  "transactions": [
+    {
+      "date-processed": "01-01-2025",
+      "date-of-transaction": "",
+      "company-name": "Opening Balance",
+      "amount": "\u00a33,200.00",
+      "balance": "\u00a33,200.00",
+      "type": "opening_balance",
+      "company-type": "Opening Balance",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-03-2025",
+      "date-of-transaction": "01-03-2025",
+      "company-name": "Mortgage Payment",
+      "amount": "\u00a31,402.13",
+      "balance": "\u00a31,797.87",
+      "type": "withdrawal",
+      "company-type": "Recurring debts",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-04-2025",
+      "date-of-transaction": "01-04-2025",
+      "company-name": "Sainsbury's",
+      "amount": "\u00a392.45",
+      "balance": "\u00a31,705.42",
+      "type": "withdrawal",
+      "company-type": "shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-05-2025",
+      "date-of-transaction": "01-05-2025",
+      "company-name": "Starbucks",
+      "amount": "\u00a34.95",
+      "balance": "\u00a31,700.47",
+      "type": "withdrawal",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-06-2025",
+      "date-of-transaction": "01-06-2025",
+      "company-name": "Shell Petrol",
+      "amount": "\u00a360.00",
+      "balance": "\u00a31,640.47",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-07-2025",
+      "date-of-transaction": "01-07-2025",
+      "company-name": "Salary",
+      "amount": "\u00a32,000.00",
+      "balance": "\u00a33,640.47",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-09-2025",
+      "date-of-transaction": "01-09-2025",
+      "company-name": "Utility - Electricity Direct Debit",
+      "amount": "\u00a385.60",
+      "balance": "\u00a33,554.87",
+      "type": "withdrawal",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-12-2025",
+      "date-of-transaction": "01-12-2025",
+      "company-name": "Tesco",
+      "amount": "\u00a368.90",
+      "balance": "\u00a33,485.97",
+      "type": "withdrawal",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-14-2025",
+      "date-of-transaction": "01-14-2025",
+      "company-name": "Waitrose",
+      "amount": "\u00a354.20",
+      "balance": "\u00a33,431.77",
+      "type": "withdrawal",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-16-2025",
+      "date-of-transaction": "01-16-2025",
+      "company-name": "Home Insurance",
+      "amount": "\u00a345.00",
+      "balance": "\u00a33,386.77",
+      "type": "withdrawal",
+      "company-type": "Recurring Debts",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-18-2025",
+      "date-of-transaction": "01-18-2025",
+      "company-name": "Coffee",
+      "amount": "\u00a37.20",
+      "balance": "\u00a33,379.57",
+      "type": "withdrawal",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-20-2025",
+      "date-of-transaction": "01-20-2025",
+      "company-name": "Primark",
+      "amount": "\u00a368.00",
+      "balance": "\u00a33,311.57",
+      "type": "withdrawal",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-22-2025",
+      "date-of-transaction": "01-22-2025",
+      "company-name": "Phone Bill Direct Debit",
+      "amount": "\u00a328.50",
+      "balance": "\u00a33,283.07",
+      "type": "withdrawal",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-25-2025",
+      "date-of-transaction": "01-25-2025",
+      "company-name": "Restaurant",
+      "amount": "\u00a362.75",
+      "balance": "\u00a33,220.32",
+      "type": "withdrawal",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-30-2025",
+      "date-of-transaction": "01-30-2025",
+      "company-name": "Salary",
+      "amount": "\u00a33,800.00",
+      "balance": "\u00a37,020.32",
+      "type": "deposit",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-31-2025",
+      "date-of-transaction": "01-31-2025",
+      "company-name": "Council Tax",
+      "amount": "\u00a3150.00",
+      "balance": "\u00a36,870.32",
+      "type": "withdrawal",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "01-31-2025",
+      "date-of-transaction": "01-31-2025",
+      "company-name": "Sainsbury's",
+      "amount": "\u00a374.25",
+      "balance": "\u00a36,796.07",
+      "type": "withdrawal",
+      "company-type": "shopping",
+      "card-type": "debit"
+    }
+  ],
+  "summary": {
+    "money_in": 5800.0,
+    "money_out": 2203.93
+  }
+}

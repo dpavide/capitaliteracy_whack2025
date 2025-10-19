@@ -2,39 +2,29 @@
   "category": "bills",
   "transactions": [
     {
-      "date-processed": "06-14-2021",
-      "date-of-transaction": "06-14-2021",
-      "company-name": "Phone Top-up",
-      "amount": "$15.00",
-      "balance": "$16.87",
+      "date-processed": "01-09-2025",
+      "date-of-transaction": "01-09-2025",
+      "company-name": "Utility - Electricity Direct Debit",
+      "amount": "\u00a385.60",
+      "balance": "\u00a33,554.87",
       "type": "withdrawal",
       "company-type": "Bills",
       "card-type": "debit"
     },
     {
-      "date-processed": "06-07-2024",
-      "date-of-transaction": "06-04-2024",
-      "company-name": "Bill Payment - Silicon Valley Graphic",
-      "amount": "$450.00",
-      "balance": "$3,386.05",
+      "date-processed": "01-22-2025",
+      "date-of-transaction": "01-22-2025",
+      "company-name": "Phone Bill Direct Debit",
+      "amount": "\u00a328.50",
+      "balance": "\u00a33,238.08",
       "type": "withdrawal",
       "company-type": "Bills",
-      "card-type": "credit"
-    },
-    {
-      "date-processed": "06-11-2024",
-      "date-of-transaction": "06-09-2024",
-      "company-name": "Bill Payment - Silicon Valley Graphic",
-      "amount": "$4,500.00",
-      "balance": "$3,238.15",
-      "type": "withdrawal",
-      "company-type": "Bills",
-      "card-type": "credit"
+      "card-type": "debit"
     }
   ],
   "summary": {
     "money_in": 0.0,
-    "money_out": 4965.0,
-    "count": 3
+    "money_out": 114.1,
+    "count": 2
   }
 }

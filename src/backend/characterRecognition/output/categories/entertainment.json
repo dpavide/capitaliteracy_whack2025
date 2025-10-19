@@ -1,40 +1,9 @@
 {
   "category": "entertainment",
-  "transactions": [
-    {
-      "date-processed": "06-09-2021",
-      "date-of-transaction": "06-09-2021",
-      "company-name": "Steam",
-      "amount": "$19.99",
-      "balance": "$56.87",
-      "type": "withdrawal",
-      "company-type": "Entertainment",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-10-2021",
-      "date-of-transaction": "06-10-2021",
-      "company-name": "Vue",
-      "amount": "$15.00",
-      "balance": "$41.87",
-      "type": "withdrawal",
-      "company-type": "Entertainment",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-07-2024",
-      "date-of-transaction": "06-04-2024",
-      "company-name": "Docmosis Subscription",
-      "amount": "$50.00",
-      "balance": "$3,858.55",
-      "type": "withdrawal",
-      "company-type": "Entertainment",
-      "card-type": "credit"
-    }
-  ],
+  "transactions": [],
   "summary": {
     "money_in": 0.0,
-    "money_out": 84.99,
-    "count": 3
+    "money_out": 0.0,
+    "count": 0
   }
 }

@@ -6,11 +6,11 @@ import os
 from datetime import datetime
 
 def money_to_float(money_str):
-    """Convert a money string like '$4,500.25' to float 4500.25"""
+    """Convert a money string like '£4,500.25' to float 4500.25"""
     if not money_str:
         return 0.0
     try:
-        return float(money_str.replace("$", "").replace(",", ""))
+        return float(money_str.replace("£", "").replace(",", ""))
     except Exception:
         # If parsing fails, return 0.0 and warn
         print(f"Warning: couldn't parse money string '{money_str}'")
@@ -29,8 +29,8 @@ def parse_transactions(transaction_list):
         r'(\d{2}-\d{2}-\d{4})\s+'            # date of transaction
         r'(\d+\.?)\s+'                       # card id (digits, optionally trailing dot)
         r'(.*?)\s+'                          # transaction details (non-greedy)
-        r'(\$\d{1,3}(?:,\d{3})*\.\d{2}|\$\d+\.\d{2})\s+'  # amount
-        r'(\$\d{1,3}(?:,\d{3})*\.\d{2}|\$\d+\.\d{2})',    # balance
+        r'(\£\d{1,3}(?:,\d{3})*\.\d{2}|\£\d+\.\d{2})\s+'  # amount
+        r'(\£\d{1,3}(?:,\d{3})*\.\d{2}|\£\d+\.\d{2})',    # balance
         flags=re.UNICODE
     )
 
@@ -101,7 +101,7 @@ def process_transactions(raw_text, filename=""):
 
     # 1) Find the Opening Balance line (if present)
     opening_pattern = re.compile(
-        r'(\d{2}-\d{2}-\d{4})\s+Opening Balance\s+(\$\d{1,3}(?:,\d{3})*\.\d{2}|\$\d+\.\d{2})',
+        r'(\d{2}-\d{2}-\d{4})\s+Opening Balance\s+(\£\d{1,3}(?:,\d{3})*\.\d{2}|\£\d+\.\d{2})',
         flags=re.IGNORECASE
     )
 
@@ -242,8 +242,8 @@ if __name__ == "__main__":
             # Print results for this file
             print(json.dumps(result["transactions"], indent=2))
             print(f"\nSummary for {filename_key}:")
-            print(f"Money in: ${result['summary']['money_in']}")
-            print(f"Money out: ${result['summary']['money_out']}")
+            print(f"Money in: £{result['summary']['money_in']}")
+            print(f"Money out: £{result['summary']['money_out']}")
 
             # Save individual JSON file (safe name uses folder_filename)
             safe_name = filename_key.replace("/", "_")
