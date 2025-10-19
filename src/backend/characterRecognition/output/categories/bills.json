@@ -2,22 +2,14 @@
   "category": "bills",
   "transactions": [
     {
-      "date-processed": "01-09-2025",
       "date-of-transaction": "01-09-2025",
-      "company-name": "Utility - Electricity Direct Debit",
-      "amount": "\u00a385.60",
-      "balance": "\u00a33,554.87",
-      "type": "withdrawal",
+      "amount": "85.60",
       "company-type": "Bills",
       "card-type": "debit"
     },
     {
-      "date-processed": "01-22-2025",
       "date-of-transaction": "01-22-2025",
-      "company-name": "Phone Bill Direct Debit",
-      "amount": "\u00a328.50",
-      "balance": "\u00a33,238.08",
-      "type": "withdrawal",
+      "amount": "28.50",
       "company-type": "Bills",
       "card-type": "debit"
     }

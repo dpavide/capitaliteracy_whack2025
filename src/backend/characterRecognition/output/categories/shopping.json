@@ -2,129 +2,45 @@
   "category": "shopping",
   "transactions": [
     {
-      "date-processed": "01-02-2025",
       "date-of-transaction": "01-02-2025",
-      "company-name": "Amazon UK - Electronics",
-      "amount": "\u00a3245.99",
-      "balance": "\u00a32,395.99",
-      "type": "deposit",
+      "amount": "245.99",
       "company-type": "Shopping",
       "card-type": "credit"
     },
     {
-      "date-processed": "01-02-2025",
-      "date-of-transaction": "01-02-2025",
-      "company-name": "Amazon UK - Electronics",
-      "amount": "\u00a3245.99",
-      "balance": "\u00a32,395.99",
-      "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "01-03-2025",
       "date-of-transaction": "01-03-2025",
-      "company-name": "John Lewis - Home Goods",
-      "amount": "\u00a3189.50",
-      "balance": "\u00a32,585.49",
-      "type": "deposit",
+      "amount": "189.50",
       "company-type": "Shopping",
       "card-type": "credit"
     },
     {
-      "date-processed": "01-03-2025",
-      "date-of-transaction": "01-03-2025",
-      "company-name": "John Lewis - Home Goods",
-      "amount": "\u00a3189.50",
-      "balance": "\u00a32,585.49",
-      "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "01-05-2025",
       "date-of-transaction": "01-05-2025",
-      "company-name": "eBay - Vintage Clothing",
-      "amount": "\u00a367.25",
-      "balance": "\u00a32,697.74",
-      "type": "deposit",
+      "amount": "67.25",
       "company-type": "Shopping",
       "card-type": "credit"
     },
     {
-      "date-processed": "01-05-2025",
-      "date-of-transaction": "01-05-2025",
-      "company-name": "eBay - Vintage Clothing",
-      "amount": "\u00a367.25",
-      "balance": "\u00a32,697.74",
-      "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "01-10-2025",
       "date-of-transaction": "01-10-2025",
-      "company-name": "Apple Store - App Purchase",
-      "amount": "\u00a32.99",
-      "balance": "\u00a31,876.38",
-      "type": "deposit",
+      "amount": "2.99",
       "company-type": "Shopping",
       "card-type": "credit"
     },
     {
-      "date-processed": "01-10-2025",
-      "date-of-transaction": "01-10-2025",
-      "company-name": "Apple Store - App Purchase",
-      "amount": "\u00a32.99",
-      "balance": "\u00a31,876.38",
-      "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "01-11-2025",
       "date-of-transaction": "01-11-2025",
-      "company-name": "British Airways - Flight Booking",
-      "amount": "\u00a3650.00",
-      "balance": "\u00a32,526.38",
-      "type": "deposit",
+      "amount": "650.00",
       "company-type": "Shopping",
       "card-type": "credit"
     },
     {
-      "date-processed": "01-11-2025",
-      "date-of-transaction": "01-11-2025",
-      "company-name": "British Airways - Flight Booking",
-      "amount": "\u00a3650.00",
-      "balance": "\u00a32,526.38",
-      "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "01-12-2025",
       "date-of-transaction": "01-12-2025",
-      "company-name": "Waitrose - Grocery",
-      "amount": "\u00a378.90",
-      "balance": "\u00a32,605.28",
-      "type": "deposit",
+      "amount": "78.90",
       "company-type": "Shopping",
       "card-type": "credit"
-    },
-    {
-      "date-processed": "01-12-2025",
-      "date-of-transaction": "01-12-2025",
-      "company-name": "Waitrose - Grocery",
-      "amount": "\u00a378.90",
-      "balance": "\u00a32,605.28",
-      "type": "deposit",
-      "company-type": "Shopping",
-      "card-type": "debit"
     }
   ],
   "summary": {
-    "money_in": 2469.26,
+    "money_in": 1234.63,
     "money_out": 0.0,
-    "count": 12
+    "count": 6
   }
 }

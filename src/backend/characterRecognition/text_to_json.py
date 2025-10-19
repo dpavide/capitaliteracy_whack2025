@@ -3,16 +3,16 @@ text_to_json.py
 
 Merged module combining characterRecognition and the transaction parsing/JSON export logic.
 
-Usage:
-  - Ensure pytesseract, pillow, pdf2image are installed and configured.
-  - Ensure dataset.company_to_type (companies dict) exists and is importable.
-  - Run directly: python text_to_json.py
-  - Or import run_json_text() from this module.
+This variant trims the final saved JSON so each transaction object contains only:
+  - date-of-transaction
+  - amount            (string like "362.75" — no currency symbol, 2 decimals)
+  - company-type
+  - card-type
 
 Outputs:
-  - Per-file JSON results in ./output/
-  - Combined results in ./output/all_transactions.json
-  - Category files in ./output/categories/
+  - Per-file JSON results in ./output/ (each file contains only trimmed transactions)
+  - Combined results in ./output/all_transactions.json (only trimmed transactions)
+  - Category files in ./output/categories/ (trimmed transactions only)
 """
 
 import os
@@ -26,6 +26,9 @@ import pytesseract as tess
 from PIL import Image
 from pdf2image import convert_from_path
 
+# ---------------------------
+# Company mapping (user provided)
+# ---------------------------
 companies = {
     "Best Embarcadero Parking": "Everything Else",
     "AIG Insurance Adjustment 20-21": "Everything Else",
@@ -97,6 +100,8 @@ companies = {
     "Netflix": "Everything Else"
 }
 
+# Create a lowercase key mapping to make lookups more robust
+companies_normalized = {k.lower(): v for k, v in companies.items()}
 
 # ----------------------------
 # Character recognition utils
@@ -181,8 +186,6 @@ def _collect_files_from_dir(directory):
 def _find_candidate_dir(script_directory, target_folder):
     """
     Look for target_folder in a few likely locations and return the first existing path or None.
-    This handles cases where this module is placed in a subfolder but the credit/debit folders
-    are elsewhere in the repo.
     """
     script_directory = os.path.abspath(script_directory)
 
@@ -214,13 +217,11 @@ def _find_candidate_dir(script_directory, target_folder):
 
 def character_recognition():
     """
-    Main function to process files in the creditStatements/ and debitStatements/ folders (searching likely locations).
+    Main function to process files in the credit/ and debit/ folders (searching likely locations).
     Returns a dict mapping keys "<folder>/<filename>" -> extracted_text
-    Example keys: "credit/statement1.pdf", "debit/photo1.png"
     """
     script_directory = os.path.dirname(os.path.abspath(__file__))
 
-    # The original code used 'creditStatements' and 'debitStatements' as target_folder names.
     credit_dir = _find_candidate_dir(script_directory, "credit")
     debit_dir = _find_candidate_dir(script_directory, "debit")
 
@@ -231,7 +232,6 @@ def character_recognition():
     if credit_dir:
         credit_files = _collect_files_from_dir(credit_dir)
         for f in credit_files:
-            # Use a consistent short folder label for later processing
             sources.append(("credit", f))
     else:
         print("Warning: credit directory not found in searched locations.")
@@ -275,7 +275,7 @@ def character_recognition():
 def character_recognition_single(image_name="image.png", folder="credit"):
     """
     Process a single image or PDF file (backward compatibility).
-    folder is 'credit' or 'debit' (we search for the best matching folder location).
+    folder is 'credit' or 'debit'.
     """
     script_directory = os.path.dirname(os.path.abspath(__file__))
     resolved_dir = _find_candidate_dir(script_directory, folder)
@@ -305,11 +305,16 @@ def character_recognition_single(image_name="image.png", folder="credit"):
 # ----------------------------
 
 def money_to_float(money_str):
-    """Convert a money string like '£4,500.25' to float 4500.25"""
+    """Convert a money string like '£4,500.25' or '4,500.25' to float 4500.25"""
     if not money_str:
         return 0.0
     try:
-        return float(money_str.replace("£", "").replace(",", ""))
+        # strip currency symbol, whitespace, and commas
+        cleaned = re.sub(r'[^\d\.\-]', '', str(money_str))
+        # handle empty or just '-' gracefully
+        if cleaned in ("", "-", ".", "-."):
+            return 0.0
+        return float(cleaned)
     except Exception:
         print(f"Warning: couldn't parse money string '{money_str}'")
         return 0.0
@@ -470,9 +475,11 @@ def process_transactions(raw_text, filename=""):
     # Add company types
     for dictionary in json_result:
         company_type = "Everything Else"
-        name = dictionary.get("company-name", "")
-        if name in companies:
-            company_type = companies[name]
+        name = dictionary.get("company-name", "").strip()
+        if name:
+            lookup = name.lower()
+            if lookup in companies_normalized:
+                company_type = companies_normalized[lookup]
         dictionary["company-type"] = company_type
 
     return {
@@ -481,6 +488,33 @@ def process_transactions(raw_text, filename=""):
             "money_in": round(money_in, 2),
             "money_out": round(money_out, 2)
         }
+    }
+
+
+# ----------------------------
+# Helper: trimming transactions to the required minimal schema
+# ----------------------------
+def trim_transaction(txn):
+    """
+    Return a dictionary containing only the four requested fields:
+      - date-of-transaction
+      - amount  (string with 2 decimals, no currency symbol)
+      - company-type
+      - card-type
+    """
+    date_of_txn = txn.get("date-of-transaction", "") or ""
+    # convert amount (which may include £ and commas) to numeric string
+    amt = txn.get("amount", "")
+    amt_float = money_to_float(amt)
+    amt_str = f"{amt_float:.2f}"
+    company_type = txn.get("company-type", "Everything Else")
+    card_type = txn.get("card-type", "") or ""
+
+    return {
+        "date-of-transaction": date_of_txn,
+        "amount": amt_str,
+        "company-type": company_type,
+        "card-type": card_type
     }
 
 
@@ -515,9 +549,9 @@ def run_json_text():
         try:
             # Determine card-type from folder label robustly
             folder = filename_key.split('/', 1)[0].lower() if '/' in filename_key else ""
-            if folder in ("credit"):
+            if folder == "credit":
                 card_type = "credit"
-            elif folder in ("debit"):
+            elif folder == "debit":
                 card_type = "debit"
             else:
                 card_type = None
@@ -536,17 +570,21 @@ def run_json_text():
             print(f"Money in: £{result['summary']['money_in']}")
             print(f"Money out: £{result['summary']['money_out']}")
 
-            # Save individual JSON file (safe name uses folder_filename)
+            # Save individual JSON file (trimmed)
             safe_name = filename_key.replace("/", "_")
             output_filename = os.path.splitext(safe_name)[0] + ".json"
             output_path = os.path.join(output_directory, output_filename)
 
+            trimmed_for_file = {
+                "transactions": [trim_transaction(t) for t in result.get("transactions", [])]
+            }
+
             with open(output_path, 'w') as f:
-                json.dump(result, f, indent=2)
+                json.dump(trimmed_for_file, f, indent=2)
 
-            print(f"Saved results to {output_path}")
+            print(f"Saved trimmed results to {output_path}")
 
-            # Merge transactions and accumulate summary totals
+            # Merge transactions (keep the full txn objects for category/summary computation)
             merged_transactions.extend(result.get("transactions", []))
             total_money_in += result.get("summary", {}).get("money_in", 0.0)
             total_money_out += result.get("summary", {}).get("money_out", 0.0)
@@ -565,31 +603,21 @@ def run_json_text():
 
     merged_transactions.sort(key=sort_key)
 
-    # Combined single-object output
-    combined_output = {
-        "transactions": merged_transactions,
-        "summary": {
-            "money_in": round(total_money_in, 2),
-            "money_out": round(total_money_out, 2)
-        }
-    }
-
-    combined_output_path = os.path.join(output_directory, "all_transactions.json")
-    with open(combined_output_path, 'w') as f:
-        json.dump(combined_output, f, indent=2)
-
-    print(f"\nCombined results (single JSON) saved to {combined_output_path}")
-
-    per_file_output_path = os.path.join(output_directory, "per_file_results.json")
-    with open(per_file_output_path, 'w') as f:
-        json.dump(final_results, f, indent=2)
-    print(f"Per-file results saved to {per_file_output_path}")
-
-    # ----------------- Split into category files -----------------
-    desired_categories = ["shopping", "travel", "entertainment", "bills", "food", "everything else", "recurring debts"]
+    # ----------------- Split into category files (trimmed transactions only) -----------------
+    # Use category names that match typical company-type values (lowercased)
+    desired_categories = [
+        "shopping",
+        "travel",
+        "entertainment",
+        "bills",
+        "eating out",        # becomes eating_out.json
+        "everything else",
+        "recurring debts"
+    ]
     categories = {cat: [] for cat in desired_categories}
     category_summaries = {cat: {"money_in": 0.0, "money_out": 0.0} for cat in desired_categories}
 
+    # Compute summaries using full merged_transactions, but append trimmed entries to categories
     for txn in merged_transactions:
         company_type_raw = txn.get("company-type", "Everything Else")
         company_type = company_type_raw.lower().strip()
@@ -599,15 +627,16 @@ def run_json_text():
         else:
             cat = "everything else"
 
-        categories[cat].append(txn)
-
-        # compute per-category money_in/out based on txn `type` and `amount`
+        # compute per-category money_in/out based on txn `type` and numeric amount
         amt = money_to_float(txn.get("amount", ""))
         ttype = txn.get("type", "")
         if ttype == "deposit":
             category_summaries[cat]["money_in"] += amt
         elif ttype == "withdrawal":
             category_summaries[cat]["money_out"] += amt
+
+        # append trimmed transaction to category list
+        categories[cat].append(trim_transaction(txn))
 
     categories_dir = os.path.join(output_directory, "categories")
     os.makedirs(categories_dir, exist_ok=True)
@@ -637,6 +666,25 @@ def run_json_text():
         json.dump(index_obj, f, indent=2)
     print(f"Saved categories index -> {index_path}")
 
+    # ----------------- Create the final combined trimmed output -----------------
+    trimmed_merged = [trim_transaction(t) for t in merged_transactions]
+
+    combined_output = {
+        "transactions": trimmed_merged
+    }
+
+    combined_output_path = os.path.join(output_directory, "all_transactions.json")
+    with open(combined_output_path, 'w') as f:
+        json.dump(combined_output, f, indent=2)
+
+    print(f"\nCombined trimmed results saved to {combined_output_path}")
+
+    # Also save the per_file_results (keeps previous structure for debugging)
+    per_file_output_path = os.path.join(output_directory, "per_file_results.json")
+    with open(per_file_output_path, 'w') as f:
+        json.dump(final_results, f, indent=2)
+    print(f"Per-file raw results saved to {per_file_output_path}")
+
     return combined_output
 
 
@@ -644,4 +692,4 @@ if __name__ == "__main__":
     # Run the full pipeline when executed directly
     combined = run_json_text()
     print("\n=== Final Summary ===")
-    print(json.dumps(combined.get("summary", {}), indent=2))
+    print(f"Total transactions (trimmed): {len(combined.get('transactions', []))}")

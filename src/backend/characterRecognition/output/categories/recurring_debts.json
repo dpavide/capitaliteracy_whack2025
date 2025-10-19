@@ -2,42 +2,26 @@
   "category": "recurring debts",
   "transactions": [
     {
-      "date-processed": "01-03-2025",
       "date-of-transaction": "01-03-2025",
-      "company-name": "Mortgage Payment (30 yr @ 4.4%)",
-      "amount": "\u00a31,402.13",
-      "balance": "\u00a31,797.87",
-      "type": "withdrawal",
+      "amount": "1402.13",
       "company-type": "Recurring Debts",
       "card-type": "debit"
     },
     {
-      "date-processed": "01-13-2025",
       "date-of-transaction": "01-13-2025",
-      "company-name": "Car Payment - BMW Finance",
-      "amount": "\u00a3486.22",
-      "balance": "\u00a33,091.50",
-      "type": "deposit",
+      "amount": "486.22",
       "company-type": "Recurring Debts",
       "card-type": "credit"
     },
     {
-      "date-processed": "01-16-2025",
       "date-of-transaction": "01-16-2025",
-      "company-name": "Home Insurance (annual pro rata)",
-      "amount": "\u00a345.00",
-      "balance": "\u00a33,341.78",
-      "type": "withdrawal",
+      "amount": "45.00",
       "company-type": "Recurring Debts",
       "card-type": "debit"
     },
     {
-      "date-processed": "01-31-2025",
       "date-of-transaction": "01-31-2025",
-      "company-name": "Council Tax",
-      "amount": "\u00a3150.00",
-      "balance": "\u00a36,825.33",
-      "type": "withdrawal",
+      "amount": "150.00",
       "company-type": "Recurring Debts",
       "card-type": "debit"
     }
