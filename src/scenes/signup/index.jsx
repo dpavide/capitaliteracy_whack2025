@@ -14,13 +14,14 @@ import {
   FormHelperText,
   Alert,
   Slider,
-  InputAdornment, // Added for the '$' sign
+  InputAdornment,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { tokens } from '../../theme';
 import { supabase } from '../../lib/supabaseClient';
 
 const USERS_TABLE = 'users';
+const PROFILES_TABLE = 'profiles'; // Define the profiles table name
 const NUMERICAL_LITERACY_COLUMN = 'numerical_literacy_level';
 
 // Helper function to calculate age from a date string (YYYY-MM-DD)
@@ -40,7 +41,6 @@ const SignUp = () => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  // Unified state for all form fields, including the questionnaire
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -51,7 +51,7 @@ const SignUp = () => {
     numericalLiteracy: '',
     annual_income: '',
     primary_goal: '',
-    primary_goal_other: '', // Added for free-typing
+    primary_goal_other: '',
     is_first_time_buyer: null,
     target_home_price: 250000,
     down_payment: 25000,
@@ -61,7 +61,6 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Generic handler for text fields and select menus
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -70,12 +69,10 @@ const SignUp = () => {
     }
   };
 
-  // Specific handler for MUI Slider components
   const handleSliderChange = (name) => (event, newValue) => {
     setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
-  // Comprehensive validation for all fields
   const validateForm = () => {
     const newErrors = {};
     const ageFromDob = calculateAge(formData.dob);
@@ -109,7 +106,6 @@ const SignUp = () => {
       newErrors.primary_goal_other = 'Please specify your goal';
     }
 
-
     if (formData.primary_goal === 'buy_home') {
       if (formData.is_first_time_buyer === null) newErrors.is_first_time_buyer = 'This field is required';
       if (!formData.buying_timeline) newErrors.buying_timeline = 'Buying Timeline is required';
@@ -119,7 +115,6 @@ const SignUp = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Single submission handler for authentication and profile creation
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -143,13 +138,21 @@ const SignUp = () => {
       }
 
       const ageFromDob = calculateAge(formData.dob);
-      const profilePayload = {
+
+      // --- FIXED LOGIC ---
+      // Payload for the 'users' table (core user info)
+      const userPayload = {
         id: userId,
         full_name: formData.fullName,
         email: formData.email,
         age: ageFromDob,
         credit_score: ageFromDob >= 18 ? Number(formData.creditScore) : null,
         [NUMERICAL_LITERACY_COLUMN]: formData.numericalLiteracy,
+      };
+
+      // Payload for the 'profiles' table (questionnaire info)
+      const profilePayload = {
+        id: userId,
         annual_income: Number(formData.annual_income),
         primary_goal: formData.primary_goal === 'other' ? formData.primary_goal_other : formData.primary_goal,
         is_first_time_buyer: formData.primary_goal === 'buy_home' ? formData.is_first_time_buyer : null,
@@ -158,10 +161,17 @@ const SignUp = () => {
         buying_timeline: formData.primary_goal === 'buy_home' ? formData.buying_timeline : null,
       };
 
-      const { error: upsertError } = await supabase.from(USERS_TABLE).upsert(profilePayload);
+      // Perform both database operations concurrently
+      const [userResult, profileResult] = await Promise.all([
+        supabase.from(USERS_TABLE).upsert(userPayload),
+        supabase.from(PROFILES_TABLE).upsert(profilePayload)
+      ]);
 
-      if (upsertError) {
-        alert(`Error saving profile: ${upsertError.message}`);
+      // Check for errors from either operation
+      if (userResult.error || profileResult.error) {
+        const userError = userResult.error ? `Users table error: ${userResult.error.message}` : '';
+        const profileError = profileResult.error ? `Profiles table error: ${profileResult.error.message}` : '';
+        alert(`Error saving profile data.\n${userError}\n${profileError}`);
         setLoading(false);
         return;
       }
@@ -251,7 +261,7 @@ const SignUp = () => {
               margin="normal"
             />
           )}
-          
+
           <TextField
             fullWidth
             label="Annual Household Income"
@@ -263,7 +273,7 @@ const SignUp = () => {
             helperText={errors.annual_income}
             margin="normal"
             InputProps={{
-              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              startAdornment: <InputAdornment position="start">£</InputAdornment>,
             }}
           />
 
@@ -289,9 +299,9 @@ const SignUp = () => {
                 </Select>
                 <FormHelperText>{errors.buying_timeline}</FormHelperText>
               </FormControl>
-              <Typography gutterBottom sx={{ mt: 2 }}>Target Home Price: ${formData.target_home_price.toLocaleString()}</Typography>
+              <Typography gutterBottom sx={{ mt: 2 }}>Target Home Price: £{formData.target_home_price.toLocaleString()}</Typography>
               <Slider value={formData.target_home_price} onChange={handleSliderChange('target_home_price')} valueLabelDisplay="auto" step={10000} min={50000} max={1500000} />
-              <Typography gutterBottom sx={{ mt: 2 }}>Down Payment: ${formData.down_payment.toLocaleString()}</Typography>
+              <Typography gutterBottom sx={{ mt: 2 }}>Down Payment: £{formData.down_payment.toLocaleString()}</Typography>
               <Slider value={formData.down_payment} onChange={handleSliderChange('down_payment')} valueLabelDisplay="auto" step={1000} min={0} max={200000} />
             </Box>
           )}
