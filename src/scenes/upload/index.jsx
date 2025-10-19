@@ -13,12 +13,16 @@ import {
   Alert,
   Chip,
   useTheme,
+  Grid,
 } from '@mui/material';
 import {
   CloudUpload as CloudUploadIcon,
   Delete as DeleteIcon,
   CheckCircle as CheckCircleIcon,
   InsertDriveFile as FileIcon,
+  ArrowForward as ArrowForwardIcon,
+  CreditCard as CreditCardIcon,
+  AccountBalance as AccountBalanceIcon,
 } from '@mui/icons-material';
 import { tokens } from '../../theme';
 
@@ -26,12 +30,15 @@ const FileUpload = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [files, setFiles] = useState([]);
-  const [dragActive, setDragActive] = useState(false);
+  const [creditFiles, setCreditFiles] = useState([]);
+  const [debitFiles, setDebitFiles] = useState([]);
+  const [creditDragActive, setCreditDragActive] = useState(false);
+  const [debitDragActive, setDebitDragActive] = useState(false);
   const [errors, setErrors] = useState([]);
   const [uploading, setUploading] = useState(false);
 
   const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
+  const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB total
   const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
   const ALLOWED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.pdf'];
 
@@ -43,15 +50,27 @@ const FileUpload = () => {
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   };
 
+  const getTotalUploadedSize = () => {
+    const creditSize = creditFiles
+      .filter(f => f.uploadStatus === 'success')
+      .reduce((total, file) => total + file.size, 0);
+    const debitSize = debitFiles
+      .filter(f => f.uploadStatus === 'success')
+      .reduce((total, file) => total + file.size, 0);
+    return creditSize + debitSize;
+  };
+
+  const canUploadMore = () => {
+    return getTotalUploadedSize() < MAX_TOTAL_SIZE;
+  };
+
   const validateFile = (file) => {
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
     
-    // Check file type
     if (!ALLOWED_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
       return `${file.name}: Invalid file type. Only PNG, JPG, and PDF files are allowed.`;
     }
 
-    // Check file size
     if (file.size > MAX_FILE_SIZE) {
       return `${file.name}: File size exceeds 100MB limit. Current size: ${formatFileSize(file.size)}`;
     }
@@ -59,18 +78,18 @@ const FileUpload = () => {
     return null;
   };
 
-  const handleFiles = (newFiles) => {
+  const handleFiles = (newFiles, type) => {
     const fileArray = Array.from(newFiles);
     const validationErrors = [];
     const validFiles = [];
+    const currentFiles = type === 'credit' ? creditFiles : debitFiles;
 
     fileArray.forEach((file) => {
       const error = validateFile(file);
       if (error) {
         validationErrors.push(error);
       } else {
-        // Check if file already exists
-        const isDuplicate = files.some(f => f.name === file.name && f.size === file.size);
+        const isDuplicate = currentFiles.some(f => f.name === file.name && f.size === file.size);
         if (!isDuplicate) {
           validFiles.push({
             file,
@@ -78,10 +97,8 @@ const FileUpload = () => {
             size: file.size,
             type: file.type,
             id: Date.now() + Math.random(),
-            // NEW: per-file status
-            status: 'pending',
-            error: null,
-            response: null,
+            uploadStatus: 'pending',
+            uploadedFilename: null,
           });
         }
       }
@@ -94,134 +111,335 @@ const FileUpload = () => {
     }
 
     if (validFiles.length > 0) {
-      setFiles(prev => [...prev, ...validFiles]);
+      if (type === 'credit') {
+        setCreditFiles(prev => [...prev, ...validFiles]);
+      } else {
+        setDebitFiles(prev => [...prev, ...validFiles]);
+      }
     }
   };
 
-  const handleDrag = useCallback((e) => {
+  const handleDrag = useCallback((e, type) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
+      if (type === 'credit') {
+        setCreditDragActive(true);
+      } else {
+        setDebitDragActive(true);
+      }
     } else if (e.type === "dragleave") {
-      setDragActive(false);
+      if (type === 'credit') {
+        setCreditDragActive(false);
+      } else {
+        setDebitDragActive(false);
+      }
     }
   }, []);
 
-  const handleDrop = useCallback((e) => {
+  const handleDrop = useCallback((e, type) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(false);
+    if (type === 'credit') {
+      setCreditDragActive(false);
+    } else {
+      setDebitDragActive(false);
+    }
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files);
+      handleFiles(e.dataTransfer.files, type);
     }
-  }, [files]);
+  }, [creditFiles, debitFiles]);
 
-  const handleChange = (e) => {
+  const handleChange = (e, type) => {
     e.preventDefault();
     if (e.target.files && e.target.files.length > 0) {
-      handleFiles(e.target.files);
+      handleFiles(e.target.files, type);
     }
   };
 
-  const removeFile = (id) => {
-    setFiles(prev => prev.filter(file => file.id !== id));
+  const removeFile = async (id, type) => {
+    const files = type === 'credit' ? creditFiles : debitFiles;
+    const fileToRemove = files.find(f => f.id === id);
+    
+    if (fileToRemove && fileToRemove.uploadStatus === 'success' && fileToRemove.uploadedFilename) {
+      try {
+        await fetch(`/api/upload/${type}/${fileToRemove.uploadedFilename}`, {
+          method: 'DELETE',
+        });
+      } catch (error) {
+        console.error('Error deleting file from backend:', error);
+      }
+    }
+    
+    if (type === 'credit') {
+      setCreditFiles(prev => prev.filter(file => file.id !== id));
+    } else {
+      setDebitFiles(prev => prev.filter(file => file.id !== id));
+    }
   };
 
-  const clearAllFiles = () => {
-    setFiles([]);
-    setErrors([]);
-  };
-
-  // REPLACED: implement actual upload to Flask backend (from old project's handleSubmit)
-  const handleUpload = async () => {
-    if (files.length === 0) {
-      setErrors(['Please select at least one file to upload.']);
+  const handleUpload = async (type) => {
+    const files = type === 'credit' ? creditFiles : debitFiles;
+    const setFiles = type === 'credit' ? setCreditFiles : setDebitFiles;
+    const pendingFiles = files.filter(f => f.uploadStatus === 'pending');
+    
+    if (pendingFiles.length === 0) {
+      setErrors(['No new files to upload.']);
       return;
     }
+
+    const currentTotalSize = getTotalUploadedSize();
+    const newFilesSize = pendingFiles.reduce((total, f) => total + f.size, 0);
+    
+    if (currentTotalSize + newFilesSize > MAX_TOTAL_SIZE) {
+      setErrors([`Max file size exceeded. You can only upload ${formatFileSize(MAX_TOTAL_SIZE)} total.`]);
+      return;
+    }
+
     setUploading(true);
     setErrors([]);
 
-    try {
-      for (const f of files) {
-        // mark as uploading
-        setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'uploading', error: null } : it));
+    for (const fileObj of pendingFiles) {
+      try {
+        setFiles(prev => prev.map(f => 
+          f.id === fileObj.id ? { ...f, uploadStatus: 'uploading' } : f
+        ));
 
         const formData = new FormData();
-        formData.append('file', f.file, f.name);
-        // optional: backend defaults to 'formal' if omitted, but keep explicit for parity with old app
-        formData.append('style', 'formal');
+        formData.append('file', fileObj.file);
 
-        try {
-          const res = await fetch('http://127.0.0.1:5173/upload', {
-            method: 'POST',
-            body: formData,
-          });
+        const response = await fetch(`/api/upload/${type}`, {
+          method: 'POST',
+          body: formData,
+        });
 
-          if (!res.ok) {
-            const msg = `Upload failed for ${f.name}`;
-            setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'error', error: msg } : it));
-            continue;
-          }
-
-          const data = await res.json();
-          // store server response (article, image_url, theme_css)
-          setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'success', response: data } : it));
-        } catch (err) {
-          const msg = `Upload failed for ${f.name}`;
-          setFiles(prev => prev.map(it => it.id === f.id ? { ...it, status: 'error', error: msg } : it));
+        if (!response.ok) {
+          throw new Error(`Failed to upload ${fileObj.name}`);
         }
+
+        const result = await response.json();
+
+        setFiles(prev => prev.map(f => 
+          f.id === fileObj.id 
+            ? { ...f, uploadStatus: 'success', uploadedFilename: result.filename } 
+            : f
+        ));
+
+      } catch (error) {
+        setFiles(prev => prev.map(f => 
+          f.id === fileObj.id ? { ...f, uploadStatus: 'error' } : f
+        ));
+        setErrors(prev => [...prev, `${fileObj.name}: ${error.message}`]);
       }
-    } catch (e) {
-      setErrors([e?.message || 'Upload failed.']);
-    } finally {
-      setUploading(false);
     }
+
+    setUploading(false);
   };
 
+  const hasUploadedFiles = creditFiles.some(f => f.uploadStatus === 'success') || 
+                          debitFiles.some(f => f.uploadStatus === 'success');
+
+  const hasPendingFiles = creditFiles.some(f => f.uploadStatus === 'pending') ||
+                         debitFiles.some(f => f.uploadStatus === 'pending');
+
+  const canContinue = hasUploadedFiles && !hasPendingFiles;
+
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) {
-      return '🖼️';
-    } else if (type === 'application/pdf') {
-      return '📄';
-    }
+    if (type.startsWith('image/')) return '🖼️';
+    if (type === 'application/pdf') return '📄';
     return '📎';
   };
 
-  return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: colors.primary[400],
-        padding: 4,
-      }}
-    >
-      <Box sx={{ maxWidth: 900, margin: '0 auto' }}>
-        <Typography
-          variant="h3"
-          component="h1"
-          gutterBottom
+  const getUploadStatusText = (status) => {
+    switch (status) {
+      case 'uploading': return 'Uploading...';
+      case 'success': return 'Uploaded';
+      case 'error': return 'Failed';
+      default: return 'Pending';
+    }
+  };
+
+  const getUploadStatusColor = (status) => {
+    switch (status) {
+      case 'uploading': return colors.blueAccent[500];
+      case 'success': return colors.greenAccent[500];
+      case 'error': return colors.redAccent[500];
+      default: return colors.gray[500];
+    }
+  };
+
+  const UploadSection = ({ type, files, dragActive, icon }) => {
+    const Icon = icon;
+    const title = type === 'credit' ? 'Credit Statements' : 'Debit Statements';
+    
+    return (
+      <Box>
+        <Typography variant="h5" sx={{ color: colors.gray[100], marginBottom: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Icon /> {title}
+        </Typography>
+
+        <Paper
+          elevation={3}
           sx={{
-            fontWeight: 700,
-            color: colors.gray[100],
-            marginBottom: 1,
+            padding: 3,
+            marginBottom: 3,
+            backgroundColor: dragActive ? colors.blueAccent[900] : colors.primary[400],
+            border: `2px dashed ${dragActive ? colors.blueAccent[500] : colors.primary[200]}`,
+            borderRadius: 2,
+            textAlign: 'center',
+            transition: 'all 0.3s ease',
+            cursor: canUploadMore() ? 'pointer' : 'not-allowed',
+            opacity: canUploadMore() ? 1 : 0.5,
+            '&:hover': canUploadMore() ? {
+              borderColor: colors.blueAccent[500],
+              backgroundColor: colors.blueAccent[900],
+            } : {},
           }}
+          onDragEnter={canUploadMore() ? (e) => handleDrag(e, type) : undefined}
+          onDragLeave={canUploadMore() ? (e) => handleDrag(e, type) : undefined}
+          onDragOver={canUploadMore() ? (e) => handleDrag(e, type) : undefined}
+          onDrop={canUploadMore() ? (e) => handleDrop(e, type) : undefined}
+          onClick={canUploadMore() ? () => document.getElementById(`${type}-file-input`).click() : undefined}
         >
+          <CloudUploadIcon
+            sx={{
+              fontSize: 48,
+              color: canUploadMore() ? colors.blueAccent[500] : colors.gray[500],
+              marginBottom: 1,
+            }}
+          />
+          
+          <Typography variant="body1" sx={{ color: colors.gray[100], marginBottom: 1 }}>
+            {canUploadMore() ? 'Drop files or click' : 'Max size exceeded'}
+          </Typography>
+
+          <input
+            id={`${type}-file-input`}
+            type="file"
+            multiple
+            accept=".png,.jpg,.jpeg,.pdf"
+            onChange={(e) => handleChange(e, type)}
+            style={{ display: 'none' }}
+            disabled={!canUploadMore()}
+          />
+        </Paper>
+
+        {files.length > 0 && (
+          <Paper elevation={2} sx={{ padding: 2, backgroundColor: colors.primary[400], borderRadius: 2, marginBottom: 2 }}>
+            <List>
+              {files.map((fileObj) => (
+                <ListItem
+                  key={fileObj.id}
+                  sx={{
+                    backgroundColor: colors.primary[500],
+                    marginBottom: 1,
+                    borderRadius: 1,
+                    border: `1px solid ${colors.primary[300]}`,
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                    <Box sx={{ marginRight: 2, fontSize: 20 }}>
+                      {getFileIcon(fileObj.type)}
+                    </Box>
+                    <ListItemText
+                      primary={
+                        <Typography component="div" sx={{ color: colors.gray[100], fontSize: 14 }}>
+                          {fileObj.name}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography component="div" sx={{ display: 'flex', gap: 1, marginTop: 0.5 }}>
+                          <Typography component="span" variant="body2" sx={{ color: colors.gray[300], fontSize: 12 }}>
+                            {formatFileSize(fileObj.size)}
+                          </Typography>
+                          <Chip
+                            label={getUploadStatusText(fileObj.uploadStatus)}
+                            size="small"
+                            sx={{
+                              height: 18,
+                              fontSize: 9,
+                              backgroundColor: getUploadStatusColor(fileObj.uploadStatus),
+                              color: colors.gray[100],
+                            }}
+                          />
+                        </Typography>
+                      }
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        onClick={() => removeFile(fileObj.id, type)}
+                        size="small"
+                        sx={{
+                          color: colors.redAccent[500],
+                          '&:hover': { backgroundColor: colors.redAccent[900] },
+                        }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </Box>
+                  
+                  {fileObj.uploadStatus === 'uploading' && (
+                    <Box sx={{ width: '100%', mt: 1 }}>
+                      <LinearProgress />
+                    </Box>
+                  )}
+                </ListItem>
+              ))}
+            </List>
+
+            <Button
+              fullWidth
+              variant="contained"
+              size="medium"
+              startIcon={<CloudUploadIcon />}
+              onClick={() => handleUpload(type)}
+              disabled={uploading || !files.some(f => f.uploadStatus === 'pending') || !canUploadMore()}
+              sx={{
+                marginTop: 1,
+                backgroundColor: colors.blueAccent[600],
+                color: colors.gray[100],
+                fontSize: 14,
+                fontWeight: 600,
+                padding: '8px',
+                '&:hover': { backgroundColor: colors.blueAccent[700] },
+                '&:disabled': { backgroundColor: colors.gray[700], color: colors.gray[500] },
+              }}
+            >
+              {uploading ? 'Uploading...' : `Upload ${files.filter(f => f.uploadStatus === 'pending').length} File(s)`}
+            </Button>
+          </Paper>
+        )}
+      </Box>
+    );
+  };
+
+  return (
+    <Box sx={{ minHeight: '100vh', background: colors.primary[400], padding: 4 }}>
+      <Box sx={{ maxWidth: 1200, margin: '0 auto' }}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, color: colors.gray[100], marginBottom: 1 }}>
           Upload Statements and Receipts
         </Typography>
 
-        <Typography
-          variant="body1"
-          sx={{
-            color: colors.gray[300],
-            marginBottom: 4,
-          }}
-        >
-          Upload PNG, JPG, or PDF files (up to 100MB each)
+        <Typography variant="body1" sx={{ color: colors.gray[300], marginBottom: 2 }}>
+          Upload PNG, JPG, or PDF files (max {formatFileSize(MAX_TOTAL_SIZE)} total)
         </Typography>
 
-        {/* Error Messages */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3, padding: 2, backgroundColor: colors.primary[500], borderRadius: 2 }}>
+          <Typography variant="body2" sx={{ color: colors.gray[300] }}>
+            Total Uploaded: {formatFileSize(getTotalUploadedSize())} / {formatFileSize(MAX_TOTAL_SIZE)}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Chip label="PNG" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
+            <Chip label="JPG" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
+            <Chip label="PDF" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
+          </Box>
+        </Box>
+
         {errors.length > 0 && (
           <Box sx={{ marginBottom: 3 }}>
             {errors.map((error, index) => (
@@ -237,215 +455,40 @@ const FileUpload = () => {
           </Box>
         )}
 
-        {/* Drag and Drop Area */}
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            marginBottom: 3,
-            backgroundColor: dragActive ? colors.blueAccent[900] : colors.primary[400],
-            border: `2px dashed ${dragActive ? colors.blueAccent[500] : colors.primary[200]}`,
-            borderRadius: 2,
-            textAlign: 'center',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-            '&:hover': {
-              borderColor: colors.blueAccent[500],
-              backgroundColor: colors.blueAccent[900],
-            },
-          }}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          onClick={() => document.getElementById('file-input').click()}
-        >
-          <CloudUploadIcon
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <UploadSection type="debit" files={debitFiles} dragActive={debitDragActive} icon={AccountBalanceIcon} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <UploadSection type="credit" files={creditFiles} dragActive={creditDragActive} icon={CreditCardIcon} />
+          </Grid>
+        </Grid>
+
+        {hasUploadedFiles && (
+          <Button
+            fullWidth
+            variant="contained"
+            size="large"
+            endIcon={<ArrowForwardIcon />}
+            disabled={!canContinue}
             sx={{
-              fontSize: 64,
-              color: colors.blueAccent[500],
-              marginBottom: 2,
+              marginTop: 2,
+              backgroundColor: canContinue ? colors.greenAccent[600] : colors.gray[700],
+              color: canContinue ? colors.gray[100] : colors.gray[500],
+              fontSize: 18,
+              fontWeight: 700,
+              padding: '16px',
+              '&:hover': canContinue ? { backgroundColor: colors.greenAccent[700] } : {},
+              '&:disabled': {
+                backgroundColor: colors.gray[700],
+                color: colors.gray[500],
+              },
             }}
-          />
-          
-          <Typography variant="h5" sx={{ color: colors.gray[100], marginBottom: 1 }}>
-            Drag and drop files here
-          </Typography>
-          
-          <Typography variant="body2" sx={{ color: colors.gray[300], marginBottom: 2 }}>
-            or click to browse
-          </Typography>
-
-          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Chip label="PNG" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
-            <Chip label="JPG" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
-            <Chip label="PDF" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
-            <Chip label="Max 100MB" size="small" sx={{ backgroundColor: colors.blueAccent[700] }} />
-          </Box>
-
-          <input
-            id="file-input"
-            type="file"
-            multiple
-            accept=".png,.jpg,.jpeg,.pdf"
-            onChange={handleChange}
-            style={{ display: 'none' }}
-          />
-        </Paper>
-
-        {/* File List */}
-        {files.length > 0 && (
-          <Paper
-            elevation={3}
-            sx={{
-              padding: 3,
-              backgroundColor: colors.primary[400],
-              borderRadius: 2,
-              marginBottom: 3,
-            }}
+            onClick={() => alert('Continuing to next step...')}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-              <Typography variant="h5" sx={{ color: colors.gray[100] }}>
-                Selected Files ({files.length})
-              </Typography>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={clearAllFiles}
-                disabled={uploading}
-                sx={{
-                  color: colors.redAccent[500],
-                  borderColor: colors.redAccent[500],
-                  '&:hover': {
-                    borderColor: colors.redAccent[400],
-                    backgroundColor: colors.redAccent[900],
-                  },
-                }}
-              >
-                Clear All
-              </Button>
-            </Box>
-
-            {/* NEW: show progress while uploading */}
-            {uploading && <LinearProgress sx={{ marginBottom: 2 }} />}
-
-            <List>
-              {files.map((fileObj) => (
-                <ListItem
-                  key={fileObj.id}
-                  sx={{
-                    backgroundColor: colors.primary[500],
-                    marginBottom: 1,
-                    borderRadius: 1,
-                    border: `1px solid ${colors.primary[300]}`,
-                  }}
-                >
-                  <Box sx={{ marginRight: 2, fontSize: 24 }}>
-                    {getFileIcon(fileObj.type)}
-                  </Box>
-                  <ListItemText
-                    primary={
-                      <Typography sx={{ color: colors.gray[100], fontWeight: 500 }}>
-                        {fileObj.name}
-                      </Typography>
-                    }
-                    secondary={
-                      <Box sx={{ display: 'flex', gap: 2, marginTop: 0.5, alignItems: 'center' }}>
-                        <Typography variant="body2" sx={{ color: colors.gray[300] }}>
-                          {formatFileSize(fileObj.size)}
-                        </Typography>
-                        <Chip
-                          label={fileObj.type.split('/')[1]?.toUpperCase() || 'FILE'}
-                          size="small"
-                          sx={{
-                            height: 20,
-                            fontSize: 10,
-                            backgroundColor: colors.blueAccent[800],
-                          }}
-                        />
-                        {/* NEW: status chips */}
-                        {fileObj.status === 'uploading' && (
-                          <Chip label="Uploading..." size="small" sx={{ backgroundColor: colors.blueAccent[700] }} />
-                        )}
-                        {fileObj.status === 'success' && (
-                          <Chip label="Uploaded" size="small" sx={{ backgroundColor: colors.greenAccent[700] }} />
-                        )}
-                        {fileObj.status === 'error' && (
-                          <Chip label="Failed" size="small" sx={{ backgroundColor: colors.redAccent[700] }} />
-                        )}
-                      </Box>
-                    }
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      edge="end"
-                      onClick={() => removeFile(fileObj.id)}
-                      disabled={uploading || fileObj.status === 'uploading'}
-                      sx={{
-                        color: colors.redAccent[500],
-                        '&:hover': {
-                          backgroundColor: colors.redAccent[900],
-                        },
-                        opacity: (uploading || fileObj.status === 'uploading') ? 0.5 : 1,
-                        cursor: (uploading || fileObj.status === 'uploading') ? 'not-allowed' : 'pointer',
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
-
-            <Button
-              fullWidth
-              variant="contained"
-              size="large"
-              startIcon={<CheckCircleIcon />}
-              onClick={handleUpload}
-              disabled={uploading}
-              sx={{
-                marginTop: 2,
-                backgroundColor: colors.greenAccent[600],
-                color: colors.gray[100],
-                fontSize: 16,
-                fontWeight: 600,
-                padding: '12px',
-                '&:hover': {
-                  backgroundColor: colors.greenAccent[700],
-                },
-              }}
-            >
-              {uploading ? 'Uploading...' : `Upload ${files.length} File${files.length !== 1 ? 's' : ''}`}
-            </Button>
-          </Paper>
+            {hasPendingFiles ? 'Upload pending files to continue' : 'Continue'}
+          </Button>
         )}
-
-        {/* Info Section */}
-        <Paper
-          elevation={1}
-          sx={{
-            padding: 2,
-            backgroundColor: colors.primary[500],
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="body2" sx={{ color: colors.gray[300], marginBottom: 1 }}>
-            ℹ️ <strong>Upload Guidelines:</strong>
-          </Typography>
-          <Typography variant="body2" sx={{ color: colors.gray[300], marginLeft: 3 }}>
-            • Accepted formats: PNG, JPG, JPEG, PDF
-          </Typography>
-          <Typography variant="body2" sx={{ color: colors.gray[300], marginLeft: 3 }}>
-            • Maximum file size: 100MB per file
-          </Typography>
-          <Typography variant="body2" sx={{ color: colors.gray[300], marginLeft: 3 }}>
-            • Multiple files can be uploaded at once
-          </Typography>
-          <Typography variant="body2" sx={{ color: colors.gray[300], marginLeft: 3 }}>
-            • Drag and drop or click to select files
-          </Typography>
-        </Paper>
       </Box>
     </Box>
   );
