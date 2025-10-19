@@ -8,6 +8,7 @@ import {
   SignUp,
   FileUpload,
   MainPage,
+  Loading,
 } from "./scenes";
 
 const AppRouter = () => {
@@ -24,6 +25,7 @@ const AppRouter = () => {
               <Route path="main_page" element={<MainPage />} />
               <Route path="signup" element={<SignUp />} />
               <Route path="upload" element={<FileUpload />} />
+              <Route path="loading" element={<Loading />} />
             </Route>
           </Routes>
         </Router>
