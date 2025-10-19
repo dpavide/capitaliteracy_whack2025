@@ -10,6 +10,20 @@ from flask import Flask, request, jsonify, Response, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import queue  # use the queue module directly
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+
+# Load environment variables
+load_dotenv()
+
+# Initialize Gemini
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+else:
+    print("⚠️ Warning: GEMINI_API_KEY not found in .env file")
+
 
 # Try to import your pipeline function
 try:
@@ -116,6 +130,43 @@ def get_spending_by_job(jobid):
         if rec is None:
             return jsonify({"error": "Not found"}), 404
         return jsonify(rec), 200
+    
+@app.route("/api/chat", methods=["POST"])
+def chatbot_reply():
+    """
+    Chatbot endpoint powered by Gemini.
+    Expects JSON: { "message": "user's input" }
+    Returns: { "reply": "AI-generated text" }
+    """
+    try:
+        data = request.get_json()
+        msg = data.get("message", "").strip()
+
+        if not msg:
+            return jsonify({"reply": "Please enter a message."}), 400
+
+        # Initialize Gemini model
+        model = genai.GenerativeModel("gemini-2.5-flash")
+
+        # Give Gemini some context about the financial app
+        prompt = f"""
+        Do no say Bot: You are an my professional financial assistant you are composed and always speek full sentences integrated into a user's spending dashboard.
+        You help users analyze their spending, categories, and financial goals.
+
+        User message: {msg}
+        """
+
+        # Generate response
+        response = model.generate_content(prompt)
+        reply_text = response.text.strip() if hasattr(response, "text") else "Sorry, I couldn't generate a reply."
+
+        return jsonify({"reply": reply_text})
+
+    except Exception as e:
+        print("Chatbot error:", e)
+        traceback.print_exc()
+        return jsonify({"reply": "Something went wrong connecting to Gemini."}), 500
+
 
 
 # ------------------------------------------------------------------

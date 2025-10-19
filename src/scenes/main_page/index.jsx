@@ -4,6 +4,7 @@ import { tokens } from '../../theme';
 import SpendingLineChart from '../../components/SpendingLineChart';
 import SpendingPieChart from '../../components/SpendingPieChart';
 import InteractivePieChart from '../../components/InteractivePieChart';
+import Chatbot from "../../components/Chatbot"; // ✅ you already imported this
 
 const MainPage = () => {
   const theme = useTheme();
@@ -108,6 +109,11 @@ const MainPage = () => {
               <div style={{ width: '65%', maxWidth: 900 }}>
                 <SpendingLineChart />
               </div>
+
+              {/* ✅ Add Chatbot at bottom */}
+              <div style={{ width: '85%', maxWidth: 1000, marginTop: 40 }}>
+                <Chatbot />
+              </div>
             </div>
           </Box>
         )}
@@ -119,10 +125,16 @@ const MainPage = () => {
               flexDirection: 'column',
               alignItems: 'center',
               padding: 4,
+              gap: 5,
             }}
           >
             {/* Goals Tab - Interactive Pie Chart */}
             <InteractivePieChart />
+
+            {/* ✅ Add Chatbot under goals chart too */}
+            <Box sx={{ width: '100%', maxWidth: 1000 }}>
+              <Chatbot />
+            </Box>
           </Box>
         )}
       </Box>
