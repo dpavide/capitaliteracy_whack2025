@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Box, Typography, Paper, useTheme, TextField, Button, Alert } from '@mui/material';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Box, Typography, Paper, useTheme, TextField, Button, Alert, CircularProgress } from '@mui/material';
 import { tokens } from '../theme';
+  import { supabase } from '../lib/supabaseClient';
 
 const InteractivePieChart = () => {
   const theme = useTheme();
@@ -9,7 +10,7 @@ const InteractivePieChart = () => {
   const [dragging, setDragging] = useState(null);
 
   const categoryColors = {
-    'Groceries': colors.greenAccent[600],
+    'Recurring Debts': colors.greenAccent[600],
     'Travel': colors.blueAccent[600],
     'Entertainment': '#e91e63',
     'Shopping': '#ff9800',
@@ -18,19 +19,96 @@ const InteractivePieChart = () => {
     'Everything Else': colors.gray[600],
   };
 
-  const [segments, setSegments] = useState([
-    { name: 'Groceries', percentage: 20 },
+  // Default state
+  const defaultSegments = [
+    { name: 'Recurring Debts', percentage: 20 },
     { name: 'Travel', percentage: 15 },
     { name: 'Entertainment', percentage: 10 },
     { name: 'Shopping', percentage: 15 },
     { name: 'Bills', percentage: 20 },
     { name: 'Eating Out', percentage: 10 },
     { name: 'Everything Else', percentage: 10 },
-  ]);
+  ];
+
+  const [segments, setSegments] = useState(defaultSegments);
+
+  // --- STATE for saving data ---
+  const [isLoading, setIsLoading] = useState(false);
+  const [saveStatus, setSaveStatus] = useState({ error: null, success: false });
 
   const radius = 150;
   const centerX = 200;
   const centerY = 200;
+
+  // --- useEffect to FETCH data on component load ---
+  useEffect(() => {
+    const fetchUserGoals = async () => {
+      try {
+        // 1. Get the current authenticated user
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+          // 2. Fetch their goals from the table
+          const { data, error } = await supabase
+            .from('spending_goals')
+            .select('segments')
+            .eq('user_id', user.id)
+            .single(); // We only expect one row
+
+          if (error && error.code !== 'PGRST116') {
+            // 'PGRST116' means 'no rows found', which is fine.
+            throw error;
+          }
+
+          // 3. If data exists, set it in state
+          if (data && data.segments) {
+            setSegments(data.segments);
+          }
+          // If no data, the component will just use the 'defaultSegments'
+        }
+      } catch (error) {
+        console.error('Error fetching goals:', error.message);
+        setSaveStatus({ error: 'Could not load saved goals.', success: false });
+      }
+    };
+
+    fetchUserGoals();
+  }, []); // Empty array means this runs once on mount
+
+  // --- Function to SAVE data to Supabase ---
+  const handleSaveGoals = async () => {
+    setIsLoading(true);
+    setSaveStatus({ error: null, success: false });
+
+    try {
+      // 1. Get the user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('You must be logged in to save.');
+
+      // 2. Prepare the data to be saved
+      const goalsToSave = {
+        user_id: user.id,
+        segments: segments, // The current state
+        updated_at: new Date().toISOString(),
+      };
+
+      // 3. Use 'upsert' to create or update the user's row
+      const { error } = await supabase
+        .from('spending_goals')
+        .upsert(goalsToSave, { onConflict: 'user_id' });
+
+      if (error) throw error;
+
+      setSaveStatus({ error: null, success: true });
+      // Hide success message after 3 seconds
+      setTimeout(() => setSaveStatus({ error: null, success: false }), 3000);
+
+    } catch (error) {
+      setSaveStatus({ error: error.message, success: false });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Calculate total percentage
   const getTotalPercentage = () => {
@@ -170,7 +248,6 @@ const InteractivePieChart = () => {
         const prevStartAngle = prevSegment.startAngle;
         const currentEndAngle = currentSegment.endAngle;
         
-        // Allow angles to go to 0% (no minimum constraint)
         let clampedAngle = Math.max(prevStartAngle, Math.min(mouseAngle, currentEndAngle));
         
         const prevNewAngle = clampedAngle - prevStartAngle;
@@ -185,7 +262,6 @@ const InteractivePieChart = () => {
         const currentStartAngle = currentSegment.startAngle;
         const nextEndAngle = nextSegment.endAngle;
         
-        // Allow angles to go to 0% (no minimum constraint)
         let clampedAngle = Math.max(currentStartAngle, Math.min(mouseAngle, nextEndAngle));
         
         const currentNewAngle = clampedAngle - currentStartAngle;
@@ -197,13 +273,14 @@ const InteractivePieChart = () => {
         setSegments(newSegments);
       }
     },
-    [dragging, segments]
+    [dragging, segments] // Added 'segments' back
   );
 
   const handleMouseUp = () => {
     setDragging(null);
   };
 
+  // This useEffect handles the dragging listeners
   React.useEffect(() => {
     if (dragging !== null) {
       window.addEventListener('mousemove', handleMouseMove);
@@ -436,6 +513,35 @@ const InteractivePieChart = () => {
                   Auto-Fill to 100%
                 </Button>
               </>
+            )}
+          </Box>
+
+          {/* --- Save Button and Status Messages --- */}
+          <Box sx={{ marginTop: 2 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleSaveGoals}
+              disabled={isLoading}
+              sx={{
+                backgroundColor: colors.greenAccent[600],
+                color: colors.gray[100],
+                '&:hover': { backgroundColor: colors.greenAccent[700] },
+                '&:disabled': { backgroundColor: colors.gray[500] }
+              }}
+            >
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Save Goals'}
+            </Button>
+
+            {saveStatus.success && (
+              <Alert severity="success" sx={{ mt: 2, backgroundColor: colors.greenAccent[900] }}>
+                Goals saved successfully!
+              </Alert>
+            )}
+            {saveStatus.error && (
+              <Alert severity="error" sx={{ mt: 2, backgroundColor: colors.redAccent[900] }}>
+                {saveStatus.error}
+              </Alert>
             )}
           </Box>
           
