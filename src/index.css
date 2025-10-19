@@ -52,3 +52,36 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--brand-red);
 }
+
+/* Tip box: lighter blue background with white text; overrides MUI Paper when needed */
+.tip-box,
+.MuiPaper-root.tip-box,
+.tip-box.MuiPaper-root {
+  background: linear-gradient(180deg, rgba(30,58,138,0.98) 0%, rgba(17,24,39,0.90) 100%); /* visually lighter blue than dark navy */
+  background-color: #1e3a8a !important; /* fallback / strong override */
+  color: #ffffff !important;
+  border-left: 6px solid var(--brand-blue);
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(2,6,23,0.12);
+}
+
+/* Ensure links and inline highlights inside the tip are readable */
+.tip-box a,
+.MuiPaper-root.tip-box a {
+  color: rgba(255,255,255,0.95);
+}
+.tip-box a:hover,
+.MuiPaper-root.tip-box a:hover {
+  color: rgba(255,255,255,0.85);
+  text-decoration: underline;
+}
+
+/* Style <mark> or other inline highlights inside the tip box */
+.tip-box mark,
+.MuiPaper-root.tip-box mark {
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
+  padding: 0 4px;
+  border-radius: 3px;
+}
