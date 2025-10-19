@@ -160,6 +160,25 @@ const FileUpload = () => {
     }
   };
 
+  const handleContinue = async () => {
+  try {
+    // start processing on the backend
+    const resp = await fetch('/api/process', { method: 'POST' });
+    if (!resp.ok) {
+      const txt = await resp.text();
+      setErrors([`Failed to start processing: ${txt}`]);
+      return;
+    }
+    const data = await resp.json();
+    const jobId = data.jobId;
+    // navigate to loading screen with jobId in query string
+    navigate(`/loading?jobId=${jobId}`);
+  } catch (err) {
+    console.error(err);
+    setErrors([`Failed to start processing: ${err.message}`]);
+  }
+};
+
   const removeFile = async (id, type) => {
     const files = type === 'credit' ? creditFiles : debitFiles;
     const fileToRemove = files.find(f => f.id === id);
@@ -486,7 +505,7 @@ const FileUpload = () => {
                 color: colors.gray[500],
               },
             }}
-            onClick={() => navigate('/loading')}
+            onClick={handleContinue}
           >
             {hasPendingFiles ? 'Upload pending files to continue' : 'Continue'}
           </Button>
