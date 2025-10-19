@@ -142,16 +142,237 @@ def chatbot_reply():
         data = request.get_json()
         msg = data.get("message", "").strip()
 
+        user_past_data = """
+{
+  "transactions": [
+    {
+      "date-of-transaction": "",
+      "amount": "2150.00",
+      "company-type": "Opening Balance",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "",
+      "amount": "2150.00",
+      "company-type": "Opening Balance",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "",
+      "amount": "2150.00",
+      "company-type": "Opening Balance",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "",
+      "amount": "3200.00",
+      "company-type": "Opening Balance",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-02-2025",
+      "amount": "245.99",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-02-2025",
+      "amount": "245.99",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-02-2025",
+      "amount": "245.99",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-03-2025",
+      "amount": "189.50",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-03-2025",
+      "amount": "189.50",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-03-2025",
+      "amount": "189.50",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-03-2025",
+      "amount": "1402.13",
+      "company-type": "Recurring Debts",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-04-2025",
+      "amount": "45.00",
+      "company-type": "Everything Else",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-04-2025",
+      "amount": "45.00",
+      "company-type": "Everything Else",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-04-2025",
+      "amount": "45.00",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-04-2025",
+      "amount": "92.45",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-05-2025",
+      "amount": "67.25",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-05-2025",
+      "amount": "67.25",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-05-2025",
+      "amount": "67.25",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-05-2025",
+      "amount": "4.95",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-06-2025",
+      "amount": "8.75",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-06-2025",
+      "amount": "8.75",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-06-2025",
+      "amount": "8.75",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-06-2025",
+      "amount": "60.00",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-07-2025",
+      "amount": "2000.00",
+      "company-type": "Everything Else",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-08-2025",
+      "amount": "132.40",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-08-2025",
+      "amount": "132.40",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-08-2025",
+      "amount": "132.40",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-09-2025",
+      "amount": "34.50",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-09-2025",
+      "amount": "34.50",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-09-2025",
+      "amount": "34.50",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-09-2025",
+      "amount": "85.60",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-10-2025",
+      "amount": "2.99",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-10-2025",
+      "amount": "2.99",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-10-2025",
+      "amount": "2.99",
+      "company-type": "Shopping",
+      "card-type": "debit"
+    },]
+"""
+
         if not msg:
             return jsonify({"reply": "Please enter a message."}), 400
 
         # Initialize Gemini model
         model = genai.GenerativeModel("gemini-2.5-flash")
 
+        age = 25
+        credit_score = 550
+        numerical_level = "medium"
+
         # Give Gemini some context about the financial app
         prompt = f"""
         Do no say Bot: You are an my professional financial assistant you are composed and always speek full sentences integrated into a user's spending dashboard.
         You help users analyze their spending, categories, and financial goals.
+        
+        The user is {age} years old
+        They have a credit score of {credit_score}
+        They have a numerical_level of {numerical_level}
+
+        Here is some past data {user_past_data}
+
+        LIMIT TO 5 SENTENCES MAX!!
 
         User message: {msg}
         """
