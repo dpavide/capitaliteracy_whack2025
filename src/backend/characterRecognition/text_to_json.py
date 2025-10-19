@@ -89,7 +89,12 @@ companies = {
     "Waitrose - Grocery": "Shopping",
     "Car Payment - BMW Finance": "Recurring Debts",
     "Hotel Booking - Premier Inn": "Everything Else",
-    "Netflix Subscription": "Everything Else"
+    "Netflix Subscription": "Everything Else",
+    "Mortgage Payment (30 yr @ 4.4%)": "Recurring Debts",
+    "Home Insurance (annual pro rata)": "Recurring Debts",
+    "Council Tax": "Recurring Debts",
+    "Amazon (small order) - CHARGED TO CREDIT": "Shopping",
+    "Netflix": "Everything Else"
 }
 
 
@@ -581,7 +586,7 @@ def run_json_text():
     print(f"Per-file results saved to {per_file_output_path}")
 
     # ----------------- Split into category files -----------------
-    desired_categories = ["shopping", "travel", "entertainment", "bills", "food", "everything else"]
+    desired_categories = ["shopping", "travel", "entertainment", "bills", "food", "everything else", "recurring debts"]
     categories = {cat: [] for cat in desired_categories}
     category_summaries = {cat: {"money_in": 0.0, "money_out": 0.0} for cat in desired_categories}
 
