@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -29,6 +30,7 @@ import { tokens } from '../../theme';
 const FileUpload = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
 
   const [creditFiles, setCreditFiles] = useState([]);
   const [debitFiles, setDebitFiles] = useState([]);
@@ -484,7 +486,7 @@ const FileUpload = () => {
                 color: colors.gray[500],
               },
             }}
-            onClick={() => alert('Continuing to next step...')}
+            onClick={() => navigate('/loading')}
           >
             {hasPendingFiles ? 'Upload pending files to continue' : 'Continue'}
           </Button>
