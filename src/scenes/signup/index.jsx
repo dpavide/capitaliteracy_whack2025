@@ -88,9 +88,13 @@ const SignUp = () => {
     if (!formData.numericalLiteracy) newErrors.numericalLiteracy = 'Numerical Literacy is required';
 
     if (ageFromDob >= 18) {
-      if (formData.creditScore === '') newErrors.creditScore = 'Credit Score is required';
-      else if (parseInt(formData.creditScore, 10) < 300 || parseInt(formData.creditScore, 10) > 850) {
-        newErrors.creditScore = 'Credit score must be between 300 and 850';
+      if (formData.creditScore === '') {
+        newErrors.creditScore = 'Credit Score is required';
+      } else {
+        const cs = parseInt(formData.creditScore, 10);
+        if (Number.isNaN(cs) || cs < 0 || cs > 999) {
+          newErrors.creditScore = 'Credit score must be between 0 and 999';
+        }
       }
     }
 
@@ -227,7 +231,7 @@ const SignUp = () => {
           <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
             <TextField fullWidth label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} error={!!errors.dob} helperText={errors.dob} InputLabelProps={{ shrink: true }} />
             {ageNum >= 18 && (
-              <TextField fullWidth label="Credit Score (300-850)" name="creditScore" type="number" value={formData.creditScore} onChange={handleChange} error={!!errors.creditScore} helperText={errors.creditScore} />
+              <TextField fullWidth label="Credit Score (0-999)" name="creditScore" type="number" value={formData.creditScore} onChange={handleChange} error={!!errors.creditScore} helperText={errors.creditScore} />
             )}
           </Box>
           <FormControl fullWidth margin="normal" error={!!errors.numericalLiteracy}>
