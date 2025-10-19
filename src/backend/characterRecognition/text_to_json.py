@@ -216,8 +216,8 @@ def character_recognition():
     script_directory = os.path.dirname(os.path.abspath(__file__))
 
     # The original code used 'creditStatements' and 'debitStatements' as target_folder names.
-    credit_dir = _find_candidate_dir(script_directory, "creditStatements")
-    debit_dir = _find_candidate_dir(script_directory, "debitStatements")
+    credit_dir = _find_candidate_dir(script_directory, "credit")
+    debit_dir = _find_candidate_dir(script_directory, "debit")
 
     print(f"Debug: resolved credit_dir -> {credit_dir}")
     print(f"Debug: resolved debit_dir  -> {debit_dir}")
@@ -510,9 +510,9 @@ def run_json_text():
         try:
             # Determine card-type from folder label robustly
             folder = filename_key.split('/', 1)[0].lower() if '/' in filename_key else ""
-            if folder in ("credit", "creditstatements", "credit_statements"):
+            if folder in ("credit"):
                 card_type = "credit"
-            elif folder in ("debit", "debitstatements", "debit_statements"):
+            elif folder in ("debit"):
                 card_type = "debit"
             else:
                 card_type = None
