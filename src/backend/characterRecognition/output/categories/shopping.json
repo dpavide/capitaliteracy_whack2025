@@ -8,6 +8,18 @@
       "card-type": "credit"
     },
     {
+      "date-of-transaction": "01-02-2025",
+      "amount": "245.99",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-03-2025",
+      "amount": "189.50",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
       "date-of-transaction": "01-03-2025",
       "amount": "189.50",
       "company-type": "Shopping",
@@ -20,14 +32,38 @@
       "card-type": "credit"
     },
     {
+      "date-of-transaction": "01-05-2025",
+      "amount": "67.25",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-08-2025",
+      "amount": "132.40",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-08-2025",
+      "amount": "132.40",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
       "date-of-transaction": "01-10-2025",
       "amount": "2.99",
       "company-type": "Shopping",
       "card-type": "credit"
     },
     {
-      "date-of-transaction": "01-11-2025",
-      "amount": "650.00",
+      "date-of-transaction": "01-10-2025",
+      "amount": "2.99",
+      "company-type": "Shopping",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-12-2025",
+      "amount": "78.90",
       "company-type": "Shopping",
       "card-type": "credit"
     },
@@ -39,8 +75,8 @@
     }
   ],
   "summary": {
-    "money_in": 1234.63,
-    "money_out": 0.0,
-    "count": 6
+    "money_in": 1169.26,
+    "money_out": 264.8,
+    "count": 12
   }
 }

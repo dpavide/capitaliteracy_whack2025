@@ -8,6 +8,18 @@
       "card-type": "debit"
     },
     {
+      "date-of-transaction": "01-09-2025",
+      "amount": "85.60",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-22-2025",
+      "amount": "28.50",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
       "date-of-transaction": "01-22-2025",
       "amount": "28.50",
       "company-type": "Bills",
@@ -16,7 +28,7 @@
   ],
   "summary": {
     "money_in": 0.0,
-    "money_out": 114.1,
-    "count": 2
+    "money_out": 228.2,
+    "count": 4
   }
 }

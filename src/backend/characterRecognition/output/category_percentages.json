@@ -1,0 +1,30 @@
+[
+  {
+    "name": "everything else",
+    "percentage": 76
+  },
+  {
+    "name": "travel",
+    "percentage": 10
+  },
+  {
+    "name": "shopping",
+    "percentage": 7
+  },
+  {
+    "name": "recurring debts",
+    "percentage": 6
+  },
+  {
+    "name": "eating out",
+    "percentage": 1
+  },
+  {
+    "name": "bills",
+    "percentage": 0
+  },
+  {
+    "name": "entertainment",
+    "percentage": 0
+  }
+]

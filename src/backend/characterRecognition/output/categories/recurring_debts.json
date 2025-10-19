@@ -8,6 +8,18 @@
       "card-type": "debit"
     },
     {
+      "date-of-transaction": "01-03-2025",
+      "amount": "1402.13",
+      "company-type": "Recurring Debts",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-13-2025",
+      "amount": "486.22",
+      "company-type": "Recurring Debts",
+      "card-type": "credit"
+    },
+    {
       "date-of-transaction": "01-13-2025",
       "amount": "486.22",
       "company-type": "Recurring Debts",
@@ -20,6 +32,18 @@
       "card-type": "debit"
     },
     {
+      "date-of-transaction": "01-16-2025",
+      "amount": "45.00",
+      "company-type": "Recurring Debts",
+      "card-type": "debit"
+    },
+    {
+      "date-of-transaction": "01-31-2025",
+      "amount": "150.00",
+      "company-type": "Recurring Debts",
+      "card-type": "debit"
+    },
+    {
       "date-of-transaction": "01-31-2025",
       "amount": "150.00",
       "company-type": "Recurring Debts",
@@ -27,8 +51,8 @@
     }
   ],
   "summary": {
-    "money_in": 486.22,
-    "money_out": 1597.13,
-    "count": 4
+    "money_in": 972.44,
+    "money_out": 3194.26,
+    "count": 8
   }
 }

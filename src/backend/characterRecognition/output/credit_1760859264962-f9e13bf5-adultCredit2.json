@@ -39,7 +39,7 @@
     {
       "date-of-transaction": "01-08-2025",
       "amount": "132.40",
-      "company-type": "Everything Else",
+      "company-type": "Shopping",
       "card-type": "credit"
     },
     {
@@ -57,7 +57,7 @@
     {
       "date-of-transaction": "01-11-2025",
       "amount": "650.00",
-      "company-type": "Shopping",
+      "company-type": "Travel",
       "card-type": "credit"
     },
     {
@@ -75,13 +75,13 @@
     {
       "date-of-transaction": "01-14-2025",
       "amount": "120.00",
-      "company-type": "Everything Else",
+      "company-type": "Travel",
       "card-type": "credit"
     },
     {
       "date-of-transaction": "01-15-2025",
       "amount": "10.99",
-      "company-type": "Everything Else",
+      "company-type": "Entertainment",
       "card-type": "credit"
     }
   ]

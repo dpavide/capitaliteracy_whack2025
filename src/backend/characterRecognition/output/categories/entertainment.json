@@ -1,9 +1,22 @@
 {
   "category": "entertainment",
-  "transactions": [],
+  "transactions": [
+    {
+      "date-of-transaction": "01-15-2025",
+      "amount": "10.99",
+      "company-type": "Entertainment",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-15-2025",
+      "amount": "10.99",
+      "company-type": "Entertainment",
+      "card-type": "credit"
+    }
+  ],
   "summary": {
-    "money_in": 0.0,
+    "money_in": 21.98,
     "money_out": 0.0,
-    "count": 0
+    "count": 2
   }
 }

@@ -8,8 +8,26 @@
       "card-type": "debit"
     },
     {
+      "date-of-transaction": "01-05-2025",
+      "amount": "4.95",
+      "company-type": "Eating Out",
+      "card-type": "debit"
+    },
+    {
       "date-of-transaction": "01-06-2025",
       "amount": "8.75",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-06-2025",
+      "amount": "8.75",
+      "company-type": "Eating Out",
+      "card-type": "credit"
+    },
+    {
+      "date-of-transaction": "01-09-2025",
+      "amount": "34.50",
       "company-type": "Eating Out",
       "card-type": "credit"
     },
@@ -21,8 +39,8 @@
     }
   ],
   "summary": {
-    "money_in": 43.25,
-    "money_out": 4.95,
-    "count": 3
+    "money_in": 86.5,
+    "money_out": 9.9,
+    "count": 6
   }
 }
