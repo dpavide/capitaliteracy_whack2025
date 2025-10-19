@@ -3,7 +3,6 @@ import { Box, Tabs, Tab, Typography, useTheme } from '@mui/material';
 import { tokens } from '../../theme';
 import SpendingLineChart from '../../components/SpendingLineChart';
 import SpendingPieChart from '../../components/SpendingPieChart';
-import SpendingColumnChart from '../../components/SpendingColumnChart';
 import InteractivePieChart from '../../components/InteractivePieChart';
 
 const MainPage = () => {
@@ -90,7 +89,7 @@ const MainPage = () => {
         {/* Tab Content */}
         {activeTab === 0 && (
           <Box>
-            {/* Overview Tab - Existing Charts */}
+            {/* Overview Tab - Pie at top, then daily spending line beneath */}
             <div
               style={{
                 display: 'flex',
@@ -100,17 +99,14 @@ const MainPage = () => {
                 width: '100%',
               }}
             >
-              <div style={{ width: '65%', maxWidth: 900 }}>
-                <SpendingLineChart />
-              </div>
-
-              <div style={{ width: '65%', maxWidth: 900 }}>
-                <SpendingColumnChart />
-              </div>
-
-              {/* Pie chart a bit wider so legend fits nicely */}
+              {/* Pie chart (top) - wider so legend fits */}
               <div style={{ width: '85%', maxWidth: 1100 }}>
                 <SpendingPieChart />
+              </div>
+
+              {/* Daily spending time series (below pie) */}
+              <div style={{ width: '65%', maxWidth: 900 }}>
+                <SpendingLineChart />
               </div>
             </div>
           </Box>
