@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Optional: access the same brand tokens here if needed */
+:root {
+  --brand-blue: #0047bb;
+  --brand-red: #d0343a;
+  --brand-white: #ffffff;
+}
+
 /* Your other global styles can go below */
 body {
   /* ... */
