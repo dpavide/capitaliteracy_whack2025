@@ -420,6 +420,30 @@ const FileUpload = () => {
     );
   };
 
+  // Add this function inside the FileUpload component (after state declarations)
+  const processRecognition = async () => {
+    setUploading(true);
+    try {
+      const resp = await fetch('/api/recognition/process', { method: 'POST' });
+      const json = await resp.json();
+      setUploading(false);
+
+      if (!resp.ok || !json.ok) {
+        const errMsg = (json && (json.error || json.stderr)) || 'Recognition failed';
+        setErrors(prev => [...prev, errMsg]);
+        return null;
+      }
+
+      // save results so results page can read them
+      sessionStorage.setItem('recognition_results', JSON.stringify(json.results || {}));
+      return json.results || {};
+    } catch (err) {
+      setUploading(false);
+      setErrors(prev => [...prev, String(err)]);
+      return null;
+    }
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', background: colors.primary[400], padding: 4 }}>
       <Box sx={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -472,7 +496,19 @@ const FileUpload = () => {
             variant="contained"
             size="large"
             endIcon={<ArrowForwardIcon />}
-            disabled={!canContinue}
+            onClick={async () => {
+              if (hasPendingFiles) {
+                setErrors(['Upload pending files to continue']);
+                return;
+              }
+
+              // run server-side recognition
+              const results = await processRecognition();
+              if (results) {
+                navigate('/results'); // create results route/page that reads sessionStorage
+              }
+            }}
+            disabled={!canContinue || uploading}
             sx={{
               marginTop: 2,
               backgroundColor: canContinue ? colors.greenAccent[600] : colors.gray[700],
@@ -486,9 +522,8 @@ const FileUpload = () => {
                 color: colors.gray[500],
               },
             }}
-            onClick={() => navigate('/loading')}
           >
-            {hasPendingFiles ? 'Upload pending files to continue' : 'Continue'}
+            { uploading ? 'Processing...' : (hasPendingFiles ? 'Upload pending files to continue' : 'Continue') }
           </Button>
         )}
       </Box>

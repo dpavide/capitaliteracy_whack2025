@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,7 +11,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Ensure images directories exist
+// Ensure images directories exist (names that characterRecognition expects)
 const creditDir = path.join(__dirname, 'creditStatements');
 const debitDir = path.join(__dirname, 'debitStatements');
 
@@ -21,15 +22,16 @@ if (!fs.existsSync(debitDir)) {
   fs.mkdirSync(debitDir, { recursive: true });
 }
 
-// Configure multer for file uploads
+// Configure multer for file uploads into credit/ or debit/ folders
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const type = req.path.includes('credit') ? 'creditStatements' : 'debitStatements';
-    const dir = path.join(__dirname, type);
+    // route is /api/upload/credit or /api/upload/debit
+    const isCredit = req.path.includes('/credit');
+    const dir = isCredit ? creditDir : debitDir;
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + '-' + file.originalname);
   }
 });
@@ -47,7 +49,7 @@ const upload = multer({
   }
 });
 
-// Upload endpoints
+// Upload endpoints (unchanged route paths)
 app.post('/api/upload/credit', upload.single('file'), (req, res) => {
   try {
     if (!req.file) {
@@ -82,7 +84,7 @@ app.post('/api/upload/debit', upload.single('file'), (req, res) => {
   }
 });
 
-// Delete endpoints
+// Delete endpoints (use credit/debit folder names)
 app.delete('/api/upload/credit/:filename', (req, res) => {
   try {
     const { filename } = req.params;
@@ -115,8 +117,48 @@ app.delete('/api/upload/debit/:filename', (req, res) => {
   }
 });
 
+// NEW: run the Python recognition wrapper and return JSON
+app.post('/api/recognition/process', async (req, res) => {
+  try {
+    // script path relative to project root (scripts/run_character_recognition.py)
+    const scriptPath = path.resolve(__dirname, '..', '..', 'scripts', 'run_character_recognition.py');
+
+    const py = spawn('python3', [scriptPath], { env: process.env });
+
+    let stdout = '';
+    let stderr = '';
+
+    py.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    py.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    py.on('close', (code) => {
+      if (code !== 0) {
+        return res.status(500).json({ ok: false, code, stderr, stdout });
+      }
+      try {
+        const jsonOut = JSON.parse(stdout);
+        return res.json(jsonOut);
+      } catch (err) {
+        return res.status(500).json({ ok: false, error: 'invalid-json-from-script', stdout, stderr });
+      }
+    });
+
+    py.on('error', (err) => {
+      return res.status(500).json({ ok: false, error: err.message });
+    });
+
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Credit statements: ${creditDir}`);
-  console.log(`Debit statements: ${debitDir}`);
+  console.log(`Credit folder: ${creditDir}`);
+  console.log(`Debit folder: ${debitDir}`);
 });
