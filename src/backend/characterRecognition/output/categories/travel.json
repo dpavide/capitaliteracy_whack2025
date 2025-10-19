@@ -1,0 +1,30 @@
+{
+  "category": "travel",
+  "transactions": [
+    {
+      "date-processed": "06-02-2021",
+      "date-of-transaction": "06-02-2021",
+      "company-name": "Bus Ticket",
+      "amount": "$2.50",
+      "balance": "$147.50",
+      "type": "withdrawal",
+      "company-type": "Travel",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "06-13-2021",
+      "date-of-transaction": "06-13-2021",
+      "company-name": "Bus",
+      "amount": "$10.00",
+      "balance": "$31.87",
+      "type": "withdrawal",
+      "company-type": "Travel",
+      "card-type": "debit"
+    }
+  ],
+  "summary": {
+    "money_in": 0.0,
+    "money_out": 12.5,
+    "count": 2
+  }
+}

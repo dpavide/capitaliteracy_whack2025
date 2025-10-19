@@ -1,0 +1,11 @@
+{
+  "created_at": "2025-10-19T01:05:27.221751Z",
+  "files": {
+    "shopping": "categories\\shopping.json",
+    "travel": "categories\\travel.json",
+    "entertainment": "categories\\entertainment.json",
+    "bills": "categories\\bills.json",
+    "food": "categories\\food.json",
+    "everything else": "categories\\everything_else.json"
+  }
+}

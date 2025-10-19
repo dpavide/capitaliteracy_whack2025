@@ -6,7 +6,7 @@ companies = {
     "76 Fuel 1150 Embarcadero": "Everything Else",
     "Trello Subscripton": "Entertainment",
     "ATM Embarcadero Center": "Everything Else",
-    "Blue Bottle Cofee": "Food",
+    "Blue Bottle Cofee": "Eating Out",
     "Docmosis Subscription": "Entertainment",
     "Embarcadero Centre Postage": "Everything Else",
     "Bill Payment - Silicon Valley Graphic": "Bills",
@@ -15,16 +15,16 @@ companies = {
     "_ Internet Transfer": "Everything Else",
     "Opening Balance": "Opening Balance",
     "Bus Ticket": "Travel",
-    "McDonalds": "Food",
+    "McDonalds": "Eating Out",
     "H&M": "Shopping",
     "Parents": "Everything Else",
     "ATM Withdrawal": "Everything Else",
-    "Starbucks": "Food",
+    "Starbucks": "Eating Out",
     "WHSmiths": "Shopping",
     "Steam": "Entertainment",
     "Vue": "Entertainment",
     "Uniqlo": "Shopping",
     "Bus": "Travel",
     "Phone Top-up": "Bills",
-    "Subway": "Food"
+    "Subway": "Eating Out"
 }

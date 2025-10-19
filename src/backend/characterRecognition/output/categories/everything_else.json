@@ -1,4 +1,5 @@
 {
+  "category": "everything else",
   "transactions": [
     {
       "date-processed": "06-01-2021",
@@ -23,31 +24,11 @@
     {
       "date-processed": "06-02-2021",
       "date-of-transaction": "06-02-2021",
-      "company-name": "Bus Ticket",
-      "amount": "$2.50",
-      "balance": "$147.50",
-      "type": "withdrawal",
-      "company-type": "Travel",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-02-2021",
-      "date-of-transaction": "06-02-2021",
       "company-name": "McDonalds",
       "amount": "$8.75",
       "balance": "$138.75",
       "type": "withdrawal",
       "company-type": "Eating Out",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-03-2021",
-      "date-of-transaction": "06-03-2021",
-      "company-name": "H&M",
-      "amount": "$45.00",
-      "balance": "$93.75",
-      "type": "withdrawal",
-      "company-type": "Shopping",
       "card-type": "debit"
     },
     {
@@ -91,36 +72,6 @@
       "card-type": "debit"
     },
     {
-      "date-processed": "06-08-2021",
-      "date-of-transaction": "06-08-2021",
-      "company-name": "WHSmiths",
-      "amount": "$12.40",
-      "balance": "$76.86",
-      "type": "withdrawal",
-      "company-type": "Shopping",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-09-2021",
-      "date-of-transaction": "06-09-2021",
-      "company-name": "Steam",
-      "amount": "$19.99",
-      "balance": "$56.87",
-      "type": "withdrawal",
-      "company-type": "Entertainment",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-10-2021",
-      "date-of-transaction": "06-10-2021",
-      "company-name": "Vue",
-      "amount": "$15.00",
-      "balance": "$41.87",
-      "type": "withdrawal",
-      "company-type": "Entertainment",
-      "card-type": "debit"
-    },
-    {
       "date-processed": "06-11-2021",
       "date-of-transaction": "06-11-2021",
       "company-name": "Parents",
@@ -128,36 +79,6 @@
       "balance": "$71.87",
       "type": "deposit",
       "company-type": "Everything Else",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-12-2021",
-      "date-of-transaction": "06-12-2021",
-      "company-name": "Uniqlo",
-      "amount": "$30.00",
-      "balance": "$41.87",
-      "type": "withdrawal",
-      "company-type": "Shopping",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-13-2021",
-      "date-of-transaction": "06-13-2021",
-      "company-name": "Bus",
-      "amount": "$10.00",
-      "balance": "$31.87",
-      "type": "withdrawal",
-      "company-type": "Travel",
-      "card-type": "debit"
-    },
-    {
-      "date-processed": "06-14-2021",
-      "date-of-transaction": "06-14-2021",
-      "company-name": "Phone Top-up",
-      "amount": "$15.00",
-      "balance": "$16.87",
-      "type": "withdrawal",
-      "company-type": "Bills",
       "card-type": "debit"
     },
     {
@@ -188,16 +109,6 @@
       "balance": "$4,353.80",
       "type": "withdrawal",
       "company-type": "Everything Else",
-      "card-type": "credit"
-    },
-    {
-      "date-processed": "06-02-2024",
-      "date-of-transaction": "06-01-2024",
-      "company-name": "Ferry Building Marketplace",
-      "amount": "$76.80",
-      "balance": "$4,277.00",
-      "type": "withdrawal",
-      "company-type": "Shopping",
       "card-type": "credit"
     },
     {
@@ -253,16 +164,6 @@
     {
       "date-processed": "06-07-2024",
       "date-of-transaction": "06-04-2024",
-      "company-name": "Docmosis Subscription",
-      "amount": "$50.00",
-      "balance": "$3,858.55",
-      "type": "withdrawal",
-      "company-type": "Entertainment",
-      "card-type": "credit"
-    },
-    {
-      "date-processed": "06-07-2024",
-      "date-of-transaction": "06-04-2024",
       "company-name": "Embarcadero Centre Postage",
       "amount": "$22.50",
       "balance": "$3,836.05",
@@ -273,31 +174,11 @@
     {
       "date-processed": "06-07-2024",
       "date-of-transaction": "06-04-2024",
-      "company-name": "Bill Payment - Silicon Valley Graphic",
-      "amount": "$450.00",
-      "balance": "$3,386.05",
-      "type": "withdrawal",
-      "company-type": "Bills",
-      "card-type": "credit"
-    },
-    {
-      "date-processed": "06-07-2024",
-      "date-of-transaction": "06-04-2024",
       "company-name": "Blue Bottle Cofee",
       "amount": "$11.00",
       "balance": "$3,375.05",
       "type": "withdrawal",
       "company-type": "Eating Out",
-      "card-type": "credit"
-    },
-    {
-      "date-processed": "06-08-2024",
-      "date-of-transaction": "06-07-2024",
-      "company-name": "Ferry Building Marketplace",
-      "amount": "$85.50",
-      "balance": "$3,289.55",
-      "type": "withdrawal",
-      "company-type": "Shopping",
       "card-type": "credit"
     },
     {
@@ -379,30 +260,11 @@
       "type": "deposit",
       "company-type": "Everything Else",
       "card-type": "credit"
-    },
-    {
-      "date-processed": "06-11-2024",
-      "date-of-transaction": "06-09-2024",
-      "company-name": "Bill Payment - Silicon Valley Graphic",
-      "amount": "$4,500.00",
-      "balance": "$3,238.15",
-      "type": "withdrawal",
-      "company-type": "Bills",
-      "card-type": "credit"
-    },
-    {
-      "date-processed": "06-14-2024",
-      "date-of-transaction": "06-11-2024",
-      "company-name": "Ferry Building Marketplace",
-      "amount": "$150.65",
-      "balance": "$3,087.50",
-      "type": "withdrawal",
-      "company-type": "Shopping",
-      "card-type": "credit"
     }
   ],
   "summary": {
     "money_in": 5070.6,
-    "money_out": 10973.23
+    "money_out": 1160.14,
+    "count": 26
   }
 }

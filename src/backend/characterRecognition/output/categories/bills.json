@@ -1,0 +1,40 @@
+{
+  "category": "bills",
+  "transactions": [
+    {
+      "date-processed": "06-14-2021",
+      "date-of-transaction": "06-14-2021",
+      "company-name": "Phone Top-up",
+      "amount": "$15.00",
+      "balance": "$16.87",
+      "type": "withdrawal",
+      "company-type": "Bills",
+      "card-type": "debit"
+    },
+    {
+      "date-processed": "06-07-2024",
+      "date-of-transaction": "06-04-2024",
+      "company-name": "Bill Payment - Silicon Valley Graphic",
+      "amount": "$450.00",
+      "balance": "$3,386.05",
+      "type": "withdrawal",
+      "company-type": "Bills",
+      "card-type": "credit"
+    },
+    {
+      "date-processed": "06-11-2024",
+      "date-of-transaction": "06-09-2024",
+      "company-name": "Bill Payment - Silicon Valley Graphic",
+      "amount": "$4,500.00",
+      "balance": "$3,238.15",
+      "type": "withdrawal",
+      "company-type": "Bills",
+      "card-type": "credit"
+    }
+  ],
+  "summary": {
+    "money_in": 0.0,
+    "money_out": 4965.0,
+    "count": 3
+  }
+}
