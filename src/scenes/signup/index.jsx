@@ -281,7 +281,7 @@ const SignUp = () => {
             helperText={errors.annual_income}
             margin="normal"
             InputProps={{
-              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              startAdornment: <InputAdornment position="start">£</InputAdornment>,
             }}
           />
 
@@ -307,9 +307,9 @@ const SignUp = () => {
                 </Select>
                 <FormHelperText>{errors.buying_timeline}</FormHelperText>
               </FormControl>
-              <Typography gutterBottom sx={{ mt: 2 }}>Target Home Price: ${formData.target_home_price.toLocaleString()}</Typography>
+              <Typography gutterBottom sx={{ mt: 2 }}>Target Home Price: £{formData.target_home_price.toLocaleString()}</Typography>
               <Slider value={formData.target_home_price} onChange={handleSliderChange('target_home_price')} valueLabelDisplay="auto" step={10000} min={50000} max={1500000} />
-              <Typography gutterBottom sx={{ mt: 2 }}>Down Payment: ${formData.down_payment.toLocaleString()}</Typography>
+              <Typography gutterBottom sx={{ mt: 2 }}>Down Payment: £{formData.down_payment.toLocaleString()}</Typography>
               <Slider value={formData.down_payment} onChange={handleSliderChange('down_payment')} valueLabelDisplay="auto" step={1000} min={0} max={200000} />
             </Box>
           )}
