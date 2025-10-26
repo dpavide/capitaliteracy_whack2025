@@ -2,7 +2,7 @@
 
 CapitaLiteracy is a full-stack financial literacy application designed to help users understand and manage their spending. Users can upload their credit and debit bank statements as images or PDFs. The application utilizes Optical Character Recognition (OCR) to extract transaction data, which is then automatically categorized and visualized on an interactive dashboard. The platform also features a personalized goal-setting module and an AI-powered chatbot to provide financial insights and advice.
 
-## Features
+## ✨ Features
 
 *   **Secure User Authentication**: Manages user sign-up and login via Supabase.
 *   **Bank Statement Upload**: Supports uploading credit and debit statements in PDF, PNG, and JPG formats.
@@ -12,14 +12,14 @@ CapitaLiteracy is a full-stack financial literacy application designed to help u
 *   **Personalized Budget Goals**: Allows users to interactively set and save their monthly spending goals by category.
 *   **AI Financial Coach**: A Gemini-powered chatbot provides personalized financial advice and answers questions about user spending data.
 
-## Technology Stack
+## 💻 Technology Stack
 
 *   **Frontend**: React, Vite, Material-UI (MUI), React Router, ApexCharts
 *   **Backend (API & Processing)**: Python, Flask, Google Gemini
 *   **OCR**: Tesseract, Pillow, pdf2image
 *   **Database & Authentication**: Supabase
 
-## Getting Started
+## 🚀 Getting Started
 
 Follow these instructions to get a local copy of the project up and running.
 
@@ -69,7 +69,7 @@ Follow these instructions to get a local copy of the project up and running.
     pip install -r src/backend/requirements.txt
     ```
 
-## Running the Application
+## ⚙️ Running the Application
 
 You need to run two separate processes: the Python backend and the React frontend.
 
@@ -90,7 +90,7 @@ You need to run two separate processes: the Python backend and the React fronten
 3.  **Access the Application:**
     Open your web browser and navigate to the local address provided by the Vite server (e.g., `http://localhost:5173`).
 
-## How It Works
+## 🛠️ How It Works
 
 1.  **Authentication**: A new user signs up by providing their details, or an existing user logs in. User data and financial goals are managed via Supabase.
 2.  **File Upload**: The user uploads their financial statements (credit or debit) in PDF, PNG, or JPG format.
